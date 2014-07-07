@@ -18,15 +18,8 @@ class App():
            
     def run(self):
         while True:
-            #Main code goes here ...
-            #Note that logger level needs to be set to logging.DEBUG before this shows up in the logs
-            logger.debug("Debug message")
-            logger.info("Info message")
-            logger.warn("Warning message")
-            logger.error("Error message")
-
-            commit()
-
+            log_message = commit()
+            logger.info(log_message)
             time.sleep(10)
 
 app = App()
