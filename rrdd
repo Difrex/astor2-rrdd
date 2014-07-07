@@ -23,7 +23,7 @@ class App():
             time.sleep(10)
 
 app = App()
-logger = logging.getLogger("DaemonLog")
+logger = logging.getLogger("Astor2Rrdd")
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 handler = logging.FileHandler("/var/log/astor2-rrdd/astor2-rrdd.log")
