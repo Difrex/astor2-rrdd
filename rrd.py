@@ -35,6 +35,10 @@ def new_db(rrd, db_type):
 	elif db_type == 'cpu':
 		create_cpu(rrd_db)
 
+# rrdtool create functions
+# Needs to rewrite
+##########################
+
 # Create new network DB
 def create_net(rrd_db):
 	data_sources=[ 'DS:speed1:COUNTER:600:U:U',
@@ -70,3 +74,6 @@ def create_cpu(rrd_db):
                  data_sources,
                  'RRA:AVERAGE:0.5:1:24',
                  'RRA:AVERAGE:0.5:6:10' )
+
+# End of rrdtool create functions
+#################################
