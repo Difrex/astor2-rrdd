@@ -8,19 +8,19 @@ from daemon import runner
 from rrd import *
 
 class App():
-   
+
     def __init__(self):
         self.stdin_path = '/dev/null'
-        self.stdout_path = '/dev/tty'
-        self.stderr_path = '/dev/tty'
+        self.stdout_path = '/dev/null'
+        self.stderr_path = '/dev/null'
         self.pidfile_path =  '/var/run/astor2-rrdd/astor2-rrdd.pid'
         self.pidfile_timeout = 5
-           
+
     def run(self):
         while True:
-            log_message = commit()
-            logger.info(log_message)
-            time.sleep(10)
+			commit()
+			logger.info('DB update')
+			time.sleep(10)
 
 app = App()
 logger = logging.getLogger("Astor2Rrdd")
