@@ -1,3 +1,34 @@
-#!/usr/bin/python3
+#!/usr/bin/python2.7
 
-import system
+from daemon import runner
+import logging
+import time
+
+class Collect():
+   
+    def __init__(self):
+        self.stdin_path = '/dev/null'
+        self.stdout_path = '/dev/tty'
+        self.stderr_path = '/dev/tty'
+        self.pidfile_path =  '/var/run/astor2-rrdd/astor2-rrdd.pid'
+        self.pidfile_timeout = 5
+
+    def run(self):
+    	count = 0
+        while True:
+        	print(count)
+        	sleep(2)
+        	count = count + 1
+
+app = Collect()
+
+logger = logging.getLogger("Astor2RrddLog")
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler = logging.FileHandler("/var/log/astor2-rrdd/astor2-rrdd.log")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+daemon_runner = runner.DaemonRunner(Collect)
+daemon_runner.daemon_context.files_preserve=[handler.stream]
+daemon_runner.do_action()
