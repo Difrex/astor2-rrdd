@@ -1,16 +1,12 @@
 #!/usr/bin/python2.7
-
-from daemon import runner
+#standard python libs
 import logging
 import time
 
-class App():
+#third party libs
+from daemon import runner
 
-	stdin_path = '/dev/null'
-    stdout_path = '/dev/null'
-    stderr_path = '/dev/null'
-    pidfile_path =  '/var/run/astor2-rrdd/astor2-rrdd.pid'
-    pidfile_timeout = 5
+class App():
    
     def __init__(self):
         self.stdin_path = '/dev/null'
@@ -18,23 +14,26 @@ class App():
         self.stderr_path = '/dev/tty'
         self.pidfile_path =  '/var/run/astor2-rrdd/astor2-rrdd.pid'
         self.pidfile_timeout = 5
-
+           
     def run(self):
-    	count = 0
         while True:
-        	print(count)
-        	sleep(2)
-        	count = count + 1
+            #Main code goes here ...
+            #Note that logger level needs to be set to logging.DEBUG before this shows up in the logs
+            logger.debug("Debug message")
+            logger.info("Info message")
+            logger.warn("Warning message")
+            logger.error("Error message")
+            time.sleep(10)
 
 app = App()
-
-logger = logging.getLogger("Astor2RrddLog")
+logger = logging.getLogger("DaemonLog")
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 handler = logging.FileHandler("/var/log/astor2-rrdd/astor2-rrdd.log")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-daemon_runner = runner.DaemonRunner(App)
+daemon_runner = runner.DaemonRunner(app)
+#This ensures that the logger file handle does not get closed during daemonization
 daemon_runner.daemon_context.files_preserve=[handler.stream]
 daemon_runner.do_action()
