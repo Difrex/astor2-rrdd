@@ -5,6 +5,7 @@ import time
 
 #third party libs
 from daemon import runner
+from rrd import *
 
 class App():
    
@@ -23,6 +24,9 @@ class App():
             logger.info("Info message")
             logger.warn("Warning message")
             logger.error("Error message")
+
+            commit()
+
             time.sleep(10)
 
 app = App()
