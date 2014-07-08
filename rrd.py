@@ -16,6 +16,8 @@ def commit():
 		db_check = check_db(value)
 		if db_check == True:
 			update_db(rrd, key)
+			graph(rrd, key)
+			# Create graph
 		else:
 			new_db(rrd, key)
 
@@ -46,6 +48,28 @@ def update_db(rrd, db_type):
 
 # End of update DB functions
 ############################
+
+# Create graph functions
+########################
+
+def graph(rrd, db_type):
+	png = png_path + db_type + '.png'
+	db = db_path + rrd[db_type]
+	if db_type == 'net':
+		rrdtool.graph(png, 'daily', '--start', "-l%s", 
+			'd', "--vertical-label=Num",
+			'--watermark=OpenSAN', '-w 800', 
+			"DEF:in="+ db +":in:AVERAGE",
+			"DEF:out="+ db +":out:AVERAGE",
+			"LINE1:in#0000FF:in\\r",
+			"LINE2:out#00FF00:out\\r",
+			"GPRINT:in:AVERAGE:Avg in\: %6.0lf ",
+			"GPRINT:out:MAX:Max in\: %6.0lf \\r",
+			"GPRINT:in:AVERAGE:Avg out\: %6.0lf ",
+			"GPRINT:out:MAX:Max out\: %6.0lf \\r")
+
+# End of create graph functions
+###############################
 
 # rrdtool create functions
 # Needs to rewrite
