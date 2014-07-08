@@ -24,19 +24,19 @@ def commit():
 
 # Check of rrd db file
 def check_db(db):
-	rrd_db = db_path + db
-	return os.path.isfile(rrd_db)
+    rrd_db = db_path + db
+    return os.path.isfile(rrd_db)
 
 # Update DB functions
 #####################
 
 # Get traffic value
 def get_traf(cmd):
-	import os
-	out = os.popen(cmd).read()
-	# To megabytes
-	out = int(out.strip())/1024/1024
-	return out
+    import os
+    out = os.popen(cmd).read()
+    print out.strip()
+    out = int(out.strip())/1024/1024
+    return out
 
 # Update rrd database
 def update_db(rrd, db_type):
@@ -90,21 +90,21 @@ def graph(rrd, db_type, value):
 
 # Create new db
 def new_db(rrd, db_type):
-	rrd_db = db_path + rrd[db_type]
-	if db_type == 'net':
-		create_net(rrd_db)
-	elif db_type == 'mem':
-		create_mem(rrd_db)
-	elif db_type == 'cpu':
-		create_cpu(rrd_db)
+    rrd_db = db_path + rrd[db_type]
+    if db_type == 'net':
+        create_net(rrd_db)
+    elif db_type == 'mem':
+        create_mem(rrd_db)
+    elif db_type == 'cpu':
+        create_cpu(rrd_db)
 
 # Create new network DB
 def create_net(rrd_db):
-	data_sources=[ 'DS:in:DERIVE:600:0:12500000',
+    data_sources=[ 'DS:in:DERIVE:600:0:12500000',
                 'DS:out:DERIVE:600:0:12500000'
                 ]
-	# Create network database
-	rrdtool.create( rrd_db,
+    # Create network database
+    rrdtool.create( rrd_db,
                  '--start', '920804400',
                  data_sources,
                  'RRA:AVERAGE:0.5:1:576',
@@ -115,11 +115,11 @@ def create_net(rrd_db):
 
 # Create new memory DB
 def create_mem(rrd_db):
-	data_sources=[ 'DS:speed1:COUNTER:600:U:U',
+    data_sources=[ 'DS:speed1:COUNTER:600:U:U',
                 'DS:speed2:COUNTER:600:U:U',
                 'DS:speed3:COUNTER:600:U:U' ]
-	# Create network database
-	rrdtool.create( rrd_db,
+    # Create network database
+    rrdtool.create( rrd_db,
                  '--start', '920804400',
                  data_sources,
                  'RRA:AVERAGE:0.5:1:24',
@@ -127,11 +127,11 @@ def create_mem(rrd_db):
 
 # Create new CPU DB
 def create_cpu(rrd_db):
-	data_sources=[ 'DS:speed1:COUNTER:600:U:U',
+    data_sources=[ 'DS:speed1:COUNTER:600:U:U',
                 'DS:speed2:COUNTER:600:U:U',
                 'DS:speed3:COUNTER:600:U:U' ]
-	# Create network database
-	rrdtool.create( rrd_db,
+    # Create network database
+    rrdtool.create( rrd_db,
                  '--start', '920804400',
                  data_sources,
                  'RRA:AVERAGE:0.5:1:24',
