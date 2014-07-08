@@ -1,5 +1,6 @@
 import os.path
 import sys
+import math
 
 # RRD module
 import rrdtool
@@ -33,7 +34,8 @@ def check_db(db):
 def get_traf(cmd):
 	import os
 	out = os.popen(cmd).read()
-	return int(out.strip())
+	out = int(out.strip())/1024/1024
+	return out
 
 # Update rrd database
 def update_db(rrd, db_type):
