@@ -62,13 +62,14 @@ def graph(rrd, db_type):
 	png = png_path + db_type + '.png'
 	db = db_path + rrd[db_type]
 	if db_type == 'net':
-		rrdtool.graph(png, '--start', 'end-120000s', '--width', '400',
-			"--vertical-label=Num",
-			'--watermark=OpenSAN', '-w 800',
+		rrdtool.graph(png, '--start', 'end-12000s', '--width', '400',
+			"--vertical-label=Num", '--slope-mode',
+			'--watermark=OpenSAN', '-w 600',
+			'--lower-limit', '0', '-E', '-i',
 			"DEF:in="+ db +":in:AVERAGE",
 			"DEF:out="+ db +":out:AVERAGE",
-			"LINE1:in#0000FF:out\\r",
-			"LINE2:out#00FF00:in\\r")
+			"LINE1:in#0000FF:in\\n",
+			"LINE2:out#00FF00:out\\n")
 			# "GPRINT:in:AVERAGE:Avg in\: %6.0lf ",
 			# "GPRINT:out:MAX:Max in\: %6.0lf \\r",
 			# "GPRINT:in:AVERAGE:Avg out\: %6.0lf ",
