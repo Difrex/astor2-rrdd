@@ -32,19 +32,21 @@ def check_db(db):
 # Get traffic value
 def get_traf(cmd):
 	import os
-	return os.system(cmd)
+	out = os.popen(cmd).read()
+	return int(out.strip())
 
 # Update rrd database
 def update_db(rrd, db_type):
 	# Update network DB
 	if db_type == 'net':
 		rrd_db = db_path + rrd[db_type]
-		in_cmd = 'ifconfig p3p1 |grep bytes|cut -d":" -f2|cut -d" " -f1'
+		in_cmd = 'ifconfig p3p1 |grep bytes | grep RX | awk \'{print $5}\''
 		in_traf = get_traf(in_cmd)
-		out_cmd = 'ifconfig p3p1 |grep bytes|cut -d":" -f3|cut -d" " -f1'
+		out_cmd = 'ifconfig p3p1 |grep bytes | grep TX | awk \'{print $5}\''
 		out_traf = get_traf(out_cmd)
+		print(in_traf, out_traf)
 		# Update rrd db
-		ret = rrdtool.update(rrd_db, 'N:%s:%s' %(in_traf, out_traf));
+		ret = rrdtool.update(rrd_db, 'N:%s:%s' %(in_traf, out_traf))
 
 # End of update DB functions
 ############################
