@@ -1,6 +1,15 @@
 import os.path
 import sys
 import math
+import logging
+
+# Logging
+logger = logging.getLogger("Astor2Rrdd")
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler = logging.FileHandler("/var/log/astor2-rrdd/astor2-rrdd.log")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 # RRD module
 import rrdtool
@@ -21,6 +30,7 @@ def commit():
 			# Create graph
 		else:
 			print('DB '+value+'created')
+			logger.info('DB '+value+'created')
 			new_db(rrd, key)
 
 # Check of rrd db file
@@ -48,6 +58,7 @@ def update_db(rrd, db_type):
 		out_cmd = 'ifconfig p3p1 |grep bytes | grep TX | awk \'{print $5}\''
 		out_traf = get_traf(out_cmd)
 		print('Updating DB')
+		logger.info('Updating of '+ rrd_db)
 		# Update rrd db
 		ret = rrdtool.update(rrd_db, 'N:%s:%s' %(in_traf, out_traf))
 
@@ -73,6 +84,7 @@ def graph(rrd, db_type):
 			# "GPRINT:in:AVERAGE:Avg out\: %6.0lf ",
 			# "GPRINT:out:MAX:Max out\: %6.0lf \\r")
 		print('Graph generated')
+		logger.info('Graph'+ png +'generated')
 
 # End of create graph functions
 ###############################
