@@ -20,6 +20,7 @@ def commit():
 			graph(rrd, key)
 			# Create graph
 		else:
+			print('DB '+value+'created')
 			new_db(rrd, key)
 
 # Check of rrd db file
@@ -46,7 +47,7 @@ def update_db(rrd, db_type):
 		in_traf = get_traf(in_cmd)
 		out_cmd = 'ifconfig p3p1 |grep bytes | grep TX | awk \'{print $5}\''
 		out_traf = get_traf(out_cmd)
-		print(in_traf, out_traf)
+		print('Updating DB')
 		# Update rrd db
 		ret = rrdtool.update(rrd_db, 'N:%s:%s' %(in_traf, out_traf))
 
@@ -71,6 +72,7 @@ def graph(rrd, db_type):
 			# "GPRINT:out:MAX:Max in\: %6.0lf \\r",
 			# "GPRINT:in:AVERAGE:Avg out\: %6.0lf ",
 			# "GPRINT:out:MAX:Max out\: %6.0lf \\r")
+		print('Graph generated')
 
 # End of create graph functions
 ###############################
