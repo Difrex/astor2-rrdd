@@ -18,9 +18,9 @@ class App():
 
     def run(self):
         while True:
-			commit()
-			logger.info('DB update')
-			time.sleep(5)
+            commit()
+            logger.info('DB update')
+            time.sleep(5)
 
 app = App()
 logger = logging.getLogger("Astor2Rrdd")

@@ -11,16 +11,16 @@ png_path = '/var/lib/astor2-rrdd/png/'
 # Update existing rrd database
 # Main function
 def commit():
-	# RRD databases list
-	rrd = {'mem' : 'Memory.rrd', 'net' : 'Network.rrd', 'cpu' : 'Cpu.rrd'}
-	for key, value in rrd.iteritems():
-		db_check = check_db(value)
-		if db_check == True:
-			update_db(rrd, key)
-			# Create graph
-		else:
-			print('DB '+value+'created')
-			new_db(rrd, key)
+    # RRD databases list
+    rrd = {'mem' : 'Memory.rrd', 'net' : 'Network.rrd', 'cpu' : 'Cpu.rrd'}
+    for key, value in rrd.iteritems():
+        db_check = check_db(value)
+        if db_check == True:
+            update_db(rrd, key)
+            # Create graph
+        else:
+            print('DB '+value+'created')
+            new_db(rrd, key)
 
 # Check of rrd db file
 def check_db(db):
@@ -34,27 +34,26 @@ def check_db(db):
 def get_traf(cmd):
     import os
     out = os.popen(cmd).read()
-    print out.strip()
     out = int(out.strip())/1024/1024
     return out
 
 # Update rrd database
 def update_db(rrd, db_type):
-	rrd_db = db_path + rrd[db_type]
-	# Update network DB
-	if db_type == 'net':
-		in_cmd = 'ifconfig p3p1 |grep bytes | grep RX | awk \'{print $5}\''
-		in_traf = get_traf(in_cmd)
-		out_cmd = 'ifconfig p3p1 |grep bytes | grep TX | awk \'{print $5}\''
-		out_traf = get_traf(out_cmd)
-		print('Updating DB')
-		# Update rrd db
-		ret = rrdtool.update(rrd_db, 'N:%s:%s' %(in_traf, out_traf))
-		# Generate graph
-		if out_traf > in_traf:
-			graph(rrd, db_type, out_traf)
-		else:
-			graph(rrd, db_type, in_traf)
+    rrd_db = db_path + rrd[db_type]
+    # Update network DB
+    if db_type == 'net':
+        in_cmd = 'ifconfig p3p1 |grep bytes | grep RX | awk \'{print $5}\''
+        in_traf = get_traf(in_cmd)
+        out_cmd = 'ifconfig p3p1 |grep bytes | grep TX | awk \'{print $5}\''
+        out_traf = get_traf(out_cmd)
+        print('Updating DB')
+        # Update rrd db
+        ret = rrdtool.update(rrd_db, 'N:%s:%s' %(in_traf, out_traf))
+        # Generate graph
+        if out_traf > in_traf:
+            graph(rrd, db_type, out_traf)
+        else:
+            graph(rrd, db_type, in_traf)
 
 # End of update DB functions
 ############################
@@ -63,23 +62,23 @@ def update_db(rrd, db_type):
 ########################
 
 def graph(rrd, db_type, value):
-	png = png_path + db_type + '.png'
-	db = db_path + rrd[db_type]
-	if db_type == 'net':
-		rrdtool.graph(png, '--start', 'end-12000s', '--width', '400',
-			"--vertical-label=Num", '--slope-mode', '-m', '1', '--dynamic-labels',
-			'--watermark=OpenSAN', '-w 600',
-			'--lower-limit', '0', '-E', '-i', '-r',
-			"DEF:in="+ db +":in:AVERAGE",
-			"DEF:out="+ db +":out:AVERAGE",
-			"LINE1:in#0000FF:in",
-			"LINE2:out#00FF00:out\\n",
-			)
-			# "GPRINT:in:AVERAGE:Avg in\: %6.0lf ",
-			# "GPRINT:out:MAX:Max in\: %6.0lf \\r",
-			# "GPRINT:in:AVERAGE:Avg out\: %6.0lf ",
-			# "GPRINT:out:MAX:Max out\: %6.0lf \\r")
-		print('Graph generated')
+    png = png_path + db_type + '.png'
+    db = db_path + rrd[db_type]
+    if db_type == 'net':
+        rrdtool.graph(png, '--start', 'end-12000s', '--width', '400',
+            "--vertical-label=Num", '--slope-mode', '-m', '1', '--dynamic-labels',
+            '--watermark=OpenSAN', '-w 600',
+            '--lower-limit', '0', '-E', '-i', '-r',
+            "DEF:in="+ db +":in:AVERAGE",
+            "DEF:out="+ db +":out:AVERAGE",
+            "LINE1:in#0000FF:in",
+            "LINE2:out#00FF00:out\\n",
+            )
+            # "GPRINT:in:AVERAGE:Avg in\: %6.0lf ",
+            # "GPRINT:out:MAX:Max in\: %6.0lf \\r",
+            # "GPRINT:in:AVERAGE:Avg out\: %6.0lf ",
+            # "GPRINT:out:MAX:Max out\: %6.0lf \\r")
+        print('Graph generated')
 
 # End of create graph functions
 ###############################
