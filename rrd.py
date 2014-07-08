@@ -56,7 +56,7 @@ def graph(rrd, db_type):
 	png = png_path + db_type + '.png'
 	db = db_path + rrd[db_type]
 	if db_type == 'net':
-		rrdtool.graph(png, 'daily', '--start', "-l%s", 
+		rrdtool.graph(png, 'daily', " -s 'end - 6 hours'", "-l%s", 
 			'd', "--vertical-label=Num",
 			'--watermark=OpenSAN', '-w 800', 
 			"DEF:in="+ db +":in:AVERAGE",
