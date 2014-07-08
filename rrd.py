@@ -41,29 +41,8 @@ def update_db(rrd, db_type):
 		in_traf = get_traf(in_cmd)
 		out_cmd = 'ifconfig p3p1 |grep bytes|cut -d":" -f3|cut -d" " -f1'
 		out_traf = get_traf(out_cmd)
-		rrd_up_cmd = 'rrdtool update ' + rrd_db +' -t "in:out" "N:' + str(in_traf) + ':' + str(out_traf) + '"'
-		get_traf(rrd_up_cmd)
-		# Create graph
-		rrd_graph_cmd = "rrdtool graph " + png_path + db_type + ".png " + "-s -1" + db_type + " " + "-t traffic on" + in_traf + "::" + out_traf +
-				" --lazy" +
-				" -h 80 -w 600" +
-				" -l 0 " +
-				" -a PNG" +
-				" -v bytes/sec" +
-				" DEF:in=" + rrd_db + ":in:AVERAGE",
-				" DEF:out=" + rrd_db + ":out:AVERAGE",
-				" CDEF:out_neg=out,-1,*" +
-				" AREA:in#32CD32:Incoming" +
-				" LINE1:in#336600" +
-				' GPRINT:in:MAX:  Max\\: %5.1lf %s' +
-				' GPRINT:in:AVERAGE: Avg\\: %5.1lf %S' +
-				" GPRINT:in:LAST: Current\\: %5.1lf %Sbytes/sec\\n" +
-				" AREA:out_neg#4169E1:Outgoing" +
-				" LINE1:out_neg#0033CC" +
-				" GPRINT:out:MAX:  Max\\: %5.1lf %S" +
-				" GPRINT:out:AVERAGE: Avg\\: %5.1lf %S" +
-				" GPRINT:out:LAST: Current\\: %5.1lf %Sbytes/sec" +
-				" HRULE:0#000000";
+		# Update rrd db
+		ret = rrdtool.update(rrd_db, 'N:%s:%s' %(in_traf, out_traf));
 
 # End of update DB functions
 ############################
