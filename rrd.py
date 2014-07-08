@@ -1,15 +1,6 @@
 import os.path
 import sys
 import math
-import logging
-
-# Logging
-logger = logging.getLogger("Astor2Rrdd")
-logger.setLevel(logging.INFO)
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-handler = logging.FileHandler("/var/log/astor2-rrdd/astor2-rrdd.log")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 
 # RRD module
 import rrdtool
@@ -30,7 +21,6 @@ def commit():
 			# Create graph
 		else:
 			print('DB '+value+'created')
-			logger.info('DB '+value+'created')
 			new_db(rrd, key)
 
 # Check of rrd db file
@@ -45,6 +35,7 @@ def check_db(db):
 def get_traf(cmd):
 	import os
 	out = os.popen(cmd).read()
+	# To megabytes
 	out = int(out.strip())/1024/1024
 	return out
 
@@ -58,7 +49,6 @@ def update_db(rrd, db_type):
 		out_cmd = 'ifconfig p3p1 |grep bytes | grep TX | awk \'{print $5}\''
 		out_traf = get_traf(out_cmd)
 		print('Updating DB')
-		logger.info('Updating of '+ rrd_db)
 		# Update rrd db
 		ret = rrdtool.update(rrd_db, 'N:%s:%s' %(in_traf, out_traf))
 
@@ -77,14 +67,13 @@ def graph(rrd, db_type):
 			'--watermark=OpenSAN', '-w 800',
 			"DEF:in="+ db +":in:AVERAGE",
 			"DEF:out="+ db +":out:AVERAGE",
-			"LINE1:in#0000FF:in\\r",
-			"LINE2:out#00FF00:out\\r")
+			"LINE1:in#0000FF:out\\r",
+			"LINE2:out#00FF00:in\\r")
 			# "GPRINT:in:AVERAGE:Avg in\: %6.0lf ",
 			# "GPRINT:out:MAX:Max in\: %6.0lf \\r",
 			# "GPRINT:in:AVERAGE:Avg out\: %6.0lf ",
 			# "GPRINT:out:MAX:Max out\: %6.0lf \\r")
 		print('Graph generated')
-		logger.info('Graph'+ png +'generated')
 
 # End of create graph functions
 ###############################

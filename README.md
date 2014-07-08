@@ -1,4 +1,7 @@
-# Create dirrectories
+# RRDd
+RRD collection and graph generation daemon.
+
+## Create dirrectories
 
 	mkdir -p /var/lib/astor2-rrdd/{rrd,png}
 	mkdir -p /var/run/astor2-rrdd/
