@@ -74,7 +74,6 @@ def graph(rrd, db_type):
             "GPRINT:in:AVERAGE:Avg out\: %6.0lf ",
             "GPRINT:out:MAX:Max out\: %6.0lf \\r")
         print('Graph generated')
-
 # End of create graph functions
 ###############################
 
