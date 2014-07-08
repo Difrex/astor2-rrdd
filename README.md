@@ -8,3 +8,7 @@
 
 	yum install python-daemon
 	apt-get install python-daemon
+
+## Usage
+	
+	./rrdd [start|stop|restart]
