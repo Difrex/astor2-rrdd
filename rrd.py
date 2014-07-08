@@ -37,9 +37,9 @@ def get_traf(cmd):
 
 # Update rrd database
 def update_db(rrd, db_type):
+	rrd_db = db_path + rrd[db_type]
 	# Update network DB
 	if db_type == 'net':
-		rrd_db = db_path + rrd[db_type]
 		in_cmd = 'ifconfig p3p1 |grep bytes | grep RX | awk \'{print $5}\''
 		in_traf = get_traf(in_cmd)
 		out_cmd = 'ifconfig p3p1 |grep bytes | grep TX | awk \'{print $5}\''
