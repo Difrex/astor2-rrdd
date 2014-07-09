@@ -35,8 +35,8 @@ def check_db(rrd, db_type):
         rrd_db = db_path + rrd[db_type]
         return os.path.isfile(rrd_db)
 
-# Update DB functions
-#####################
+# System
+########
 
 # Get network interfaces list
 def interfaces():
@@ -67,6 +67,12 @@ def get_cmd(cmd):
     import os
     os.popen(cmd).read()
     return int(os.popen(cmd).read())
+
+# End of system
+###############
+
+# Update DB functions
+#####################
 
 # Update rrd database
 def update_db(rrd, db_type):
@@ -139,11 +145,15 @@ def graph_mem(rrd, db_type):
             "--vertical-label=Gb", "-M",
             '--watermark=OpenSAN2', '-w 800',
             "DEF:free="+ db +":free:AVERAGE",
+            "DEF:total="+ db +":total:AVERAGE",
+            "DEF:buffers="+ db +":buffers:AVERAGE",
             "DEF:cached="+ db +":cached:AVERAGE",
             "DEF:used="+ db +":used:AVERAGE",
             "AREA:free#0000FF:free\\r",
             "LINE2:cached#00FF00:cached\\r",
-            "AREA:used#FF0000:used\\r")
+            "AREA:used#FF0000:used\\r",
+            "AREA:total#F00CC0:total\\r",
+            "LINE:buffers#222222:buffers\\r")
     print('Memory graph generated')
 
 # Generate graphic for network interfaces
