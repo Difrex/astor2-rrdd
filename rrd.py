@@ -99,7 +99,7 @@ def graph_net(rrd):
     for i in ifaces:
         png = png_path + i + '.' + rrd['net'] + '.png'
         db = db_path + i + '.' + rrd['net']
-        rrdtool.graph(png, '--start', 'end-60000s',
+        rrdtool.graph(png, '--start', 'end-50000s',
             '--title', 'Network interface ' + i,
             '--width', '400', "--vertical-label=Num",
             '--slope-mode', '-m', '1', '--dynamic-labels',
