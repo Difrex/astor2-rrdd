@@ -27,7 +27,10 @@ def check_db(rrd, db_type):
         ifaces = interfaces()
         for i in ifaces:
             rrd_db = db_path + i + '.' + rrd[db_type]
-            return os.path.isfile(rrd_db)
+            if os.path.isfile(rrd_db) != True:
+                new_db(rrd, db_type)
+            else:
+                return True
     else:
         rrd_db = db_path + rrd[db_type]
         return os.path.isfile(rrd_db)
