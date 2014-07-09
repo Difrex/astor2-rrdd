@@ -14,7 +14,7 @@ def commit():
     # RRD databases list
     rrd = { 'mem': 'Memory.rrd', 'net': 'Network.rrd', 'cpu': 'Cpu.rrd' }
     for key, value in rrd.iteritems():
-        db_check = check_db(key, value)
+        db_check = check_db(rrd, key)
         if db_check == True:
             update_db(rrd, key)
         else:
@@ -22,12 +22,15 @@ def commit():
             new_db(rrd, key)
 
 # Check of rrd db file
-def check_db(db_type, db):
+def check_db(rrd, db_type):
     if db_type == 'net':
         ifaces = interfaces()
         for i in ifaces:
-            rrd_db = db_path + i + '.' + db
+            rrd_db = db_path + i + '.' + rrd[db_type]
             return os.path.isfile(rrd_db)
+    else:
+        rrd_db = db_path + rrd[db_type]
+        return os.path.isfile(rrd_db)
 
 # Update DB functions
 #####################
@@ -70,8 +73,10 @@ def update_net(rrd):
     for i in traffic.iteritems():
         rrd_db = db_path + i[0] + '.' + rrd['net']
         # Update rrd db
+        print "Updating " + rrd_db
         rrdtool.update(rrd_db, 'N:%s:%s' % (i[1]['in'], i[1]['out']))
         # Generate graph
+        graph(rrd, 'net')
 
 
 # End of update DB functions
@@ -80,11 +85,19 @@ def update_net(rrd):
 # Create graph functions
 ########################
 
-def graph(rrd, db_type, value):
-    png = png_path + db_type + '.png'
-    db = db_path + rrd[db_type]
+# Switches for graphics
+def graph(rrd, db_type):
     if db_type == 'net':
+        graph_net(rrd)
+
+# Generate graphic for network interfaces
+def graph_net(rrd):
+    ifaces = interfaces()
+    for i in ifaces:
+        png = png_path + i + '.' + rrd['net'] + '.png'
+        db = db_path + i + '.' + rrd['net']
         rrdtool.graph(png, '--start', 'end-60000s',
+            '--title', 'Network interface ' + i,
             '--width', '400', "--vertical-label=Num",
             '--slope-mode', '-m', '1', '--dynamic-labels',
             '--watermark=OpenSAN', '-w 600',
@@ -94,7 +107,7 @@ def graph(rrd, db_type, value):
             "LINE1:in#0000FF:in",
             "LINE2:out#00FF00:out\\n",
             )
-        print('Graph generated')
+    print('Graph generated')
 
 # End of create graph functions
 ###############################
