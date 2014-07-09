@@ -1,5 +1,6 @@
 import os.path
-import math
+from os import listdir
+from os.path import join
 
 # RRD module
 import rrdtool
@@ -13,52 +14,65 @@ def commit():
     # RRD databases list
     rrd = { 'mem': 'Memory.rrd', 'net': 'Network.rrd', 'cpu': 'Cpu.rrd' }
     for key, value in rrd.iteritems():
-        db_check = check_db(value)
+        db_check = check_db(key, value)
         if db_check == True:
             update_db(rrd, key)
-            # Create graph
         else:
             print('DB '+value+'created')
             new_db(rrd, key)
 
 # Check of rrd db file
-def check_db(db):
-    rrd_db = db_path + db
-    return os.path.isfile(rrd_db)
+def check_db(db_type, db):
+    if db_type == 'net':
+        ifaces = interfaces()
+        for i in ifaces:
+            rrd_db = db_path + i + '.' + db
+            return os.path.isfile(rrd_db)
 
 # Update DB functions
 #####################
 
 # Get network interfaces list
 def interfaces():
+    sys_path = '/sys/class/net'
+    ifaces = [ f for f in listdir(sys_path) if join(sys_path, f) ]
+    ifaces.remove('lo')
+    return ifaces
 
+# Get traffic values
+def get_traf():
+    ifaces = interfaces()
+    traffic = {}
 
-# Get traffic value
-def get_traf(cmd):
-    import os
-    out = int(os.popen(cmd).read())
-    # out = int(out.strip())/1024/1024
-    return out
+    # Parsing /proc/net/dev
+    proc = '/proc/net/dev'
+    f = open(proc, "r")
+    for line in f.readlines():
+        bytes = line.split()
+        for i in ifaces:
+            net = bytes[0]
+            net = net[:-1]
+            if i == net:
+                traffic[i] = { 'in': bytes[1], 'out': bytes[9] }
+    return traffic
+
 
 # Update rrd database
 def update_db(rrd, db_type):
     rrd_db = db_path + rrd[db_type]
     # Update network DB
     if db_type == 'net':
-        in_cmd = 'ifconfig p3p1 |grep bytes | grep RX | awk \'{print $5}\''
-        in_traf = get_traf(in_cmd)
-        out_cmd = 'ifconfig p3p1 |grep bytes | grep TX | awk \'{print $5}\''
-        out_traf = get_traf(out_cmd)
-        print('Updating DB')
-        # Update rrd db
-        rrdtool.update(rrd_db, 'N:%s:%s' % (in_traf, out_traf))
-        # Generate graph
-        if out_traf > in_traf:
-            graph(rrd, db_type, out_traf)
-        else:
-            graph(rrd, db_type, in_traf)
+        update_net(rrd)
 
-def update_net():
+
+def update_net(rrd):
+    traffic = get_traf()
+    for i in traffic.iteritems():
+        rrd_db = db_path + i[0] + '.' + rrd['net']
+        # Update rrd db
+        rrdtool.update(rrd_db, 'N:%s:%s' % (i[1]['in'], i[1]['out']))
+        # Generate graph
+
 
 # End of update DB functions
 ############################
@@ -93,26 +107,29 @@ def graph(rrd, db_type, value):
 def new_db(rrd, db_type):
     rrd_db = db_path + rrd[db_type]
     if db_type == 'net':
-        create_net(rrd_db)
+        create_net(rrd)
     elif db_type == 'mem':
         create_mem(rrd_db)
     elif db_type == 'cpu':
         create_cpu(rrd_db)
 
 # Create new network DB
-def create_net(rrd_db):
-    data_sources=[ 'DS:in:DERIVE:600:0:12500000',
-                'DS:out:DERIVE:600:0:12500000'
-                ]
-    # Create network database
-    rrdtool.create( rrd_db,
-                 '--start', '920804400',
-                 data_sources,
-                 'RRA:AVERAGE:0.5:1:576',
-                 'RRA:AVERAGE:0.5:6:672',
-                 'RRA:AVERAGE:0.5:24:732',
-                 'RRA:AVERAGE:0.5:144:1460'
-                )
+def create_net(rrd):
+    ifaces = interfaces()
+    for i in ifaces:
+        rrd_db = db_path + i + '.' + rrd['net']
+        data_sources=[ 'DS:in:DERIVE:600:0:12500000',
+                    'DS:out:DERIVE:600:0:12500000'
+                    ]
+        # Create network database
+        rrdtool.create( rrd_db,
+                     '--start', '920804400',
+                     data_sources,
+                     'RRA:AVERAGE:0.5:1:576',
+                     'RRA:AVERAGE:0.5:6:672',
+                     'RRA:AVERAGE:0.5:24:732',
+                     'RRA:AVERAGE:0.5:144:1460'
+                    )
 
 # Create new memory DB
 def create_mem(rrd_db):

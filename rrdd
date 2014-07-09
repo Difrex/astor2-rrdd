@@ -13,7 +13,7 @@ class App():
         self.stdin_path = '/dev/null'
         self.stdout_path = '/dev/tty' # or /dev/tty for debug
         self.stderr_path = '/dev/tty'
-        self.pidfile_path =  '/var/run/astor2-rrdd/astor2-rrdd.pid'
+        self.pidfile_path =  '/tmp/astor2-rrdd.pid'
         self.pidfile_timeout = 5
 
     def run(self):
