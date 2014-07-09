@@ -140,8 +140,10 @@ def graph_mem(rrd, db_type):
             '--watermark=OpenSAN2', '-w 800',
             "DEF:free="+ db +":free:AVERAGE",
             "DEF:cached="+ db +":cached:AVERAGE",
+            "DEF:used="+ db +":used:AVERAGE",
             "AREA:free#0000FF:free\\r",
-            "LINE2:cached#00FF00:cached\\r")
+            "LINE2:cached#00FF00:cached\\r",
+            "AREA:used#FF0000:used\\r")
     print('Memory graph generated')
 
 # Generate graphic for network interfaces
