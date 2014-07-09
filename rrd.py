@@ -62,7 +62,28 @@ def get_traf():
                 traffic[i] = { 'in': bytes[1], 'out': bytes[9] }
     return traffic
 
-# Get cmd value
+# Get memory function
+def get_mem():
+    proc = '/proc/meminfo'
+    mem = {}
+    f = open(proc, "r")
+    for line in f.readlines():
+        memory = line.split()
+        m = memory[0]
+        m = m[:-1]
+        if m == 'MemTotal':
+            mem['total'] = memory[1]
+        elif m == 'MemFree':
+            mem['free'] = memory[1]
+        elif m == 'Buffers':
+            mem['buffers'] = memory[1]
+        elif m == 'Cached':
+            mem['cached'] = memory[1]
+        elif m == 'SwapCached':
+            mem['swap'] = memory[1]
+    return mem
+
+# Get system output 
 def get_cmd(cmd):
     import os
     os.popen(cmd).read()
