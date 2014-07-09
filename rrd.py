@@ -107,31 +107,14 @@ def update_db(rrd, db_type):
 def update_mem(rrd, db_type):
         rrd_db = db_path + rrd[db_type]
         #Get memmory data
-        memtotal_cmd="grep MemTotal /proc/meminfo | awk '{print $2}'"
-        print("Total:")
-        memtotal=get_cmd(memtotal_cmd)
-
-
-        print("Free:")
-        memfree_cmd="cat /proc/meminfo | grep MemFree | awk '{print $2}'"
-        memfree=get_cmd(memfree_cmd)
-        print memfree
-
-        print("Cached:")
-        cached_cmd="cat /proc/meminfo | grep -v Swap | grep Cached | awk '{print $2}'"
-        cached=get_cmd(cached_cmd)
-
-        print("Buffers:")
-        buffers_cmd="cat /proc/meminfo | grep Buffers | awk '{print $2}'"
-        buffers=get_cmd(buffers_cmd)
-
-        print("Used:")
-        used=memtotal
-        print(used)
+        mem = get_mem()
 
         # Update rrd db
         print('Updating mem DB')
-        rrdtool.update( rrd_db, 'N:%s:%s:%s:%s:%s' % (memfree, memtotal, buffers, cached, used) )
+        rrdtool.update( rrd_db, 'N:%s:%s:%s:%s:%s' % (mem['free'],
+            mem['total'], mem['buffers'], mem['cached'], mem['used']) )
+
+        # Generate grap
         graph(rrd, db_type)
 
 def update_net(rrd):
