@@ -5,7 +5,7 @@ import time
 
 #third party libs
 from daemon import runner
-from rrd import *
+from rrd import commit
 
 class App():
 
