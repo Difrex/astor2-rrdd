@@ -80,7 +80,7 @@ def update_db(rrd, db_type):
 def update_mem(rrd, db_type):
         rrd_db = db_path + rrd[db_type]
         #Get memmory data
-        memtotal_cmd="cat /proc/meminfo | grep MemTotal | awk '{print $2}'"
+        memtotal_cmd="grep MemTotal /proc/meminfo | awk '{print $2}'"
         print("Total:")
         memtotal=get_cmd(memtotal_cmd)
 
@@ -104,7 +104,8 @@ def update_mem(rrd, db_type):
 
         # Update rrd db
         print('Updating mem DB')
-        ret = rrdtool.update( rrd_db, 'N:%s:%s:%s:%s:%s' % (memfree, memtotal, buffers, cached, used) )
+        rrdtool.update( rrd_db, 'N:%s:%s:%s:%s:%s' % (memfree, memtotal, buffers, cached, used) )
+        graph(rrd, db_type)
 
 def update_net(rrd):
     traffic = get_traf()
@@ -131,8 +132,9 @@ def graph(rrd, db_type):
         graph_mem(rrd, db_type)
 
 # Generate graphic for memory usage
-def graph_mem(rrd):
-    png = png_path + db_type + '.png'
+def graph_mem(rrd, db_type):
+    png = png_path + rrd[db_type] + '.png'
+    db = db_path + rrd[db_type]
     rrdtool.graph(png, '--start', 'end-120000s', '--width', '400',
             "--vertical-label=Gb", "-M",
             '--watermark=OpenSAN2', '-w 800',
