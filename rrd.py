@@ -69,8 +69,8 @@ def get_mem():
     f = open(proc, "r")
     for line in f.readlines():
         memory = line.split()
-        m = memory[0]
-        m = m[:-1]
+        m = memory[0][:-1]
+        # m = m[:-1]
         if m == 'MemTotal':
             mem['total'] = memory[1]
         elif m == 'MemFree':
@@ -83,10 +83,23 @@ def get_mem():
             mem['swap'] = memory[1]
     return mem
 
-# Get system output 
+
+# Get phisical ids
+def cpu_id():
+    proc = '/proc/cpuinfo'
+    f = open(proc, "r")
+    
+    # Physical id counter
+    phys = 1
+    for line in f.readlines():
+        l = line.split(':')
+        print l
+
+
+# Get system output. 
+# !!! Will be removed later !!!
 def get_cmd(cmd):
     import os
-    os.popen(cmd).read()
     return int(os.popen(cmd).read())
 
 # End of system
