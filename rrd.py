@@ -104,9 +104,7 @@ def update_mem(rrd, db_type):
 
         # Update rrd db
         print('Updating mem DB')
-        ret = rrdtool.update(rrd_db, 'N:%s:%s:%s:%s:%s' %(memfree, memtotal,buffers,cached,used))
-
-
+        ret = rrdtool.update( rrd_db, 'N:%s:%s:%s:%s:%s' % (memfree, memtotal, buffers, cached, used) )
 
 def update_net(rrd):
     traffic = get_traf()
@@ -200,12 +198,11 @@ def create_net(rrd):
 
 # Create new memory DB
 def create_mem(rrd_db):
-memfree, memtotal,buffers,cached,used
     data_sources = [ 'DS:free:DERIVE:600:U:U',
                 'DS:total:DERIVE:600:U:U',
                 'DS:cached:DERIVE:600:U:U',
                 'DS:buffers:DERIVE:600:U:U',
-                'DS::used:600:U:U'
+                'DS:used:DERIVE:600:U:U'
                 ]
     # Create network database
     rrdtool.create( rrd_db,
