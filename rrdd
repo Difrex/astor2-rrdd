@@ -20,7 +20,7 @@ class App():
         while True:
             commit()
             logger.info('DB update')
-            time.sleep(5)
+            time.sleep(15)
 
 app = App()
 logger = logging.getLogger("Astor2Rrdd")

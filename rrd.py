@@ -18,7 +18,7 @@ def commit():
         if db_check == True:
             update_db(rrd, key)
         else:
-            print('DB '+value+'created')
+            print('DB '+value+' created')
             new_db(rrd, key)
 
 # Check of rrd db file
@@ -70,7 +70,6 @@ def get_mem():
     for line in f.readlines():
         memory = line.split()
         m = memory[0][:-1]
-        # m = m[:-1]
         if m == 'MemTotal':
             mem['total'] = memory[1]
         elif m == 'MemFree':
@@ -81,7 +80,8 @@ def get_mem():
             mem['cached'] = memory[1]
         elif m == 'SwapCached':
             mem['swap'] = memory[1]
-    mem['used']=int(mem['total'])-int(mem['free'])-int(mem['buffers'])-int(mem['cached'])
+
+    mem['used'] = (int( mem['total'] ) - int( mem['free'] )) - ( int(mem['cached']) - int(mem['buffers']) )
     return mem
 
 
@@ -89,12 +89,19 @@ def get_mem():
 def cpu_id():
     proc = '/proc/cpuinfo'
     f = open(proc, "r")
-    
+
     # Physical id counter
     phys = 1
     for line in f.readlines():
         l = line.split(':')
-        print l
+        name = l[0][:-1]
+        if name == 'physical id':
+            value = l[1]
+            print name, value
+            if int(value) >= phys:
+                phys = phys + 1
+
+    return phys
 
 
 # Get system output. 
@@ -118,29 +125,30 @@ def update_db(rrd, db_type):
     elif db_type == 'mem':
         update_mem(rrd, db_type)
 
+# Update memory DB
 def update_mem(rrd, db_type):
         rrd_db = db_path + rrd[db_type]
         #Get memmory data
         mem = get_mem()
 
+        print mem # Debug
         # Update rrd db
         print('Updating mem DB')
-        rrdtool.update( rrd_db, 'N:%s:%s:%s:%s:%s' % (mem['free'],
-            mem['total'], mem['buffers'], mem['cached'], mem['used']) )
+        rrdtool.update( rrd_db, 'N:%s:%s:%s:%s:%s' % (int(mem['free']),
+            int(mem['total']), int(mem['buffers']), int(mem['cached']), mem['used']) )
 
-        # Generate grap
+        # Generate graph
         graph(rrd, db_type)
+        print('Memory graph generated')
 
 def update_net(rrd):
     traffic = get_traf()
     for i in traffic.iteritems():
         rrd_db = db_path + i[0] + '.' + rrd['net']
         # Update rrd db
-        print "Updating " + rrd_db
         rrdtool.update(rrd_db, 'N:%s:%s' % (i[1]['in'], i[1]['out']))
         # Generate graph
         graph(rrd, 'net')
-
 
 # End of update DB functions
 ############################
@@ -152,6 +160,7 @@ def update_net(rrd):
 def graph(rrd, db_type):
     if db_type == 'net':
         graph_net(rrd)
+        print('Net graphs generated')
     elif db_type == 'mem':
         graph_mem(rrd, db_type)
 
@@ -162,17 +171,17 @@ def graph_mem(rrd, db_type):
     rrdtool.graph(png, '--start', 'end-120000s', '--width', '400',
             "--vertical-label=Gb", "-M",
             '--watermark=OpenSAN2', '-w 800',
-            "DEF:free="+ db +":free:AVERAGE",
-            "DEF:total="+ db +":total:AVERAGE",
-            "DEF:buffers="+ db +":buffers:AVERAGE",
-            "DEF:cached="+ db +":cached:AVERAGE",
-            "DEF:used="+ db +":used:AVERAGE",
-            "AREA:free#0000FF:free\\r",
-            "LINE2:cached#00FF00:cached\\r",
-            "AREA:used#FF0000:used\\r",
-            "AREA:total#F00CC0:total\\r",
-            "LINE:buffers#222222:buffers\\r")
-    print('Memory graph generated')
+            '--lower-limit', '0', '-E', '-i', '-r',
+            "DEF:free="+ db +":free:LAST",
+            "DEF:total="+ db +":total:LAST",
+            # "DEF:buffers="+ db +":buffers:AVERAGE",
+            # "DEF:cached="+ db +":cached:AVERAGE",
+            # "DEF:used="+ db +":used:AVERAGE",
+            "AREA:free#0000FF:free\\n",
+            # "LINE2:cached#00FF00:cached\\r",
+            # "AREA:used#FF0000:used\\r",
+            "AREA:total#F00CC0:total\\n" )
+            # "LINE:buffers#222222:buffers\\r")
 
 # Generate graphic for network interfaces
 def graph_net(rrd):
@@ -180,18 +189,17 @@ def graph_net(rrd):
     for i in ifaces:
         png = png_path + i + '.' + rrd['net'] + '.png'
         db = db_path + i + '.' + rrd['net']
-        rrdtool.graph(png, '--start', 'end-50000s',
+        rrdtool.graph(png, '--start', 'end-2h',
             '--title', 'Network interface ' + i,
             '--width', '400', "--vertical-label=Num",
             '--slope-mode', '-m', '1', '--dynamic-labels',
-            '--watermark=OpenSAN', '-w 600',
+            '--watermark=OpenSAN2', '-w 600',
             '--lower-limit', '0', '-E', '-i', '-r',
             "DEF:in="+ db +":in:AVERAGE",
             "DEF:out="+ db +":out:AVERAGE",
             "LINE1:in#0000FF:in",
             "LINE2:out#00FF00:out\\n",
             )
-    print('Graph generated')
 
 # End of create graph functions
 ###############################
@@ -230,21 +238,20 @@ def create_net(rrd):
 
 # Create new memory DB
 def create_mem(rrd_db):
-    data_sources = [ 'DS:free:DERIVE:600:U:U',
-                'DS:total:DERIVE:600:U:U',
-                'DS:cached:DERIVE:600:U:U',
-                'DS:buffers:DERIVE:600:U:U',
-                'DS:used:DERIVE:600:U:U'
+    data_sources = [ 'DS:free:DERIVE:200:0:12500000',
+                'DS:total:DERIVE:200:0:12500000',
+                'DS:cached:DERIVE:200:0:12500000',
+                'DS:buffers:DERIVE:200:0:12500000',
+                'DS:used:DERIVE:200:0:12500000'
                 ]
     # Create network database
     rrdtool.create( rrd_db,
-                 '--start', '920804400',
                  data_sources,
-                 'RRA:AVERAGE:0.5:1:24',
-                 'RRA:AVERAGE:0.5:6:10',
-                 'RRA:AVERAGE:0.5:1:24',
-                 'RRA:AVERAGE:0.5:1:24',
-                 'RRA:AVERAGE:0.5:1:24' )
+                 'RRA:LAST:0.5:1:1',
+                 'RRA:LAST:0.5:6:10',
+                 'RRA:LAST:0.5:1:24',
+                 'RRA:LAST:0.5:1:24',
+                 'RRA:LAST:0.5:1:24' )
 
 # Create new CPU DB
 def create_cpu(rrd_db):
