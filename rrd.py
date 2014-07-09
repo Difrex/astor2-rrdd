@@ -85,7 +85,7 @@ def get_mem():
     return mem
 
 
-# Get phisical ids
+# Get phisicals CPU
 def cpu_id():
     proc = '/proc/cpuinfo'
     f = open(proc, "r")
