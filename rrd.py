@@ -65,8 +65,8 @@ def get_traf():
 # Get cmd value
 def get_cmd(cmd):
     import os
-    out = os.popen(cmd).read()
-    return out
+    os.popen(cmd).read()
+    return int(os.popen(cmd).read())
 
 # Update rrd database
 def update_db(rrd, db_type):
