@@ -62,6 +62,13 @@ def get_traf():
                 traffic[i] = { 'in': bytes[1], 'out': bytes[9] }
     return traffic
 
+# Get cmd value
+def get_cmd(cmd):
+    import os
+    out = os.popen(cmd).read()
+    return out
+
+
 
 # Update rrd database
 def update_db(rrd, db_type):
@@ -69,6 +76,38 @@ def update_db(rrd, db_type):
     # Update network DB
     if db_type == 'net':
         update_net(rrd)
+    elif db_type == 'mem':
+        update_mem(rrd)
+
+def update_mem(rrd):
+        rrd_db = db_path + rrd[db_type]
+        #Get memmory data
+        memtotal_cmd="cat /proc/meminfo | grep MemTotal | awk '{print $2}'"
+        print("Total:")
+        memtotal=get_cmd(memtotal_cmd)
+
+
+        print("Free:")
+        memfree_cmd="cat /proc/meminfo | grep MemFree | awk '{print $2}'"
+        memfree=get_cmd(memfree_cmd)
+        print memfree
+
+        print("Cached:")
+        cached_cmd="cat /proc/meminfo | grep -v Swap | grep Cached | awk '{print $2}'"
+        cached=get_cmd(cached_cmd)
+
+        print("Buffers:")
+        buffers_cmd="cat /proc/meminfo | grep Buffers | awk '{print $2}'"
+        buffers=get_cmd(buffers_cmd)
+
+        print("Used:")
+        used=memtotal
+        print(used)
+
+        # Update rrd db
+        print('Updating mem DB')
+        ret = rrdtool.update(rrd_db, 'N:%s:%s:%s:%s:%s' %(memfree, memtotal,buffers,cached,used))
+
 
 
 def update_net(rrd):
@@ -92,6 +131,20 @@ def update_net(rrd):
 def graph(rrd, db_type):
     if db_type == 'net':
         graph_net(rrd)
+    elif db_type == 'mem':
+        graph_mem(rrd)
+
+# Generate graphic for memory usage
+def graph_mem(rrd):
+    rrdtool.graph(png, '--start', 'end-120000s', '--width', '400',
+            "--vertical-label=Gb", "-M",
+            '--watermark=OpenSAN2', '-w 800',
+            "DEF:free="+ db +":free:AVERAGE",
+            "DEF:cached="+ db +":cached:AVERAGE",
+            "AREA:free#0000FF:free\\r",
+            "LINE2:cached#00FF00:cached\\r")
+    print('Memory graph generated')
+#
 
 # Generate graphic for network interfaces
 def graph_net(rrd):
