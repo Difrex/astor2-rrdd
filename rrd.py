@@ -81,6 +81,7 @@ def get_mem():
             mem['cached'] = memory[1]
         elif m == 'SwapCached':
             mem['swap'] = memory[1]
+    mem['used']=int(mem['total'])-int(mem['free'])-int(mem['buffers'])-int(mem['cached'])
     return mem
 
 
