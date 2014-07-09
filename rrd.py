@@ -68,8 +68,6 @@ def get_cmd(cmd):
     out = os.popen(cmd).read()
     return out
 
-
-
 # Update rrd database
 def update_db(rrd, db_type):
     rrd_db = db_path + rrd[db_type]
@@ -77,9 +75,9 @@ def update_db(rrd, db_type):
     if db_type == 'net':
         update_net(rrd)
     elif db_type == 'mem':
-        update_mem(rrd)
+        update_mem(rrd, db_type)
 
-def update_mem(rrd):
+def update_mem(rrd, db_type):
         rrd_db = db_path + rrd[db_type]
         #Get memmory data
         memtotal_cmd="cat /proc/meminfo | grep MemTotal | awk '{print $2}'"
@@ -132,10 +130,11 @@ def graph(rrd, db_type):
     if db_type == 'net':
         graph_net(rrd)
     elif db_type == 'mem':
-        graph_mem(rrd)
+        graph_mem(rrd, db_type)
 
 # Generate graphic for memory usage
 def graph_mem(rrd):
+    png = png_path + db_type + '.png'
     rrdtool.graph(png, '--start', 'end-120000s', '--width', '400',
             "--vertical-label=Gb", "-M",
             '--watermark=OpenSAN2', '-w 800',
@@ -144,7 +143,6 @@ def graph_mem(rrd):
             "AREA:free#0000FF:free\\r",
             "LINE2:cached#00FF00:cached\\r")
     print('Memory graph generated')
-#
 
 # Generate graphic for network interfaces
 def graph_net(rrd):
@@ -202,15 +200,22 @@ def create_net(rrd):
 
 # Create new memory DB
 def create_mem(rrd_db):
-    data_sources=[ 'DS:speed1:COUNTER:600:U:U',
-                'DS:speed2:COUNTER:600:U:U',
-                'DS:speed3:COUNTER:600:U:U' ]
+memfree, memtotal,buffers,cached,used
+    data_sources = [ 'DS:free:DERIVE:600:U:U',
+                'DS:total:DERIVE:600:U:U',
+                'DS:cached:DERIVE:600:U:U',
+                'DS:buffers:DERIVE:600:U:U',
+                'DS::used:600:U:U'
+                ]
     # Create network database
     rrdtool.create( rrd_db,
                  '--start', '920804400',
                  data_sources,
                  'RRA:AVERAGE:0.5:1:24',
-                 'RRA:AVERAGE:0.5:6:10' )
+                 'RRA:AVERAGE:0.5:6:10',
+                 'RRA:AVERAGE:0.5:1:24',
+                 'RRA:AVERAGE:0.5:1:24',
+                 'RRA:AVERAGE:0.5:1:24' )
 
 # Create new CPU DB
 def create_cpu(rrd_db):
