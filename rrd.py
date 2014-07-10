@@ -1,3 +1,4 @@
+import os
 import os.path
 from os import listdir
 from os.path import join
@@ -122,15 +123,44 @@ def cpu_cores():
         except:
             continue
 
-    print cores
     return cores
 
+
+# Get load average
+def cpu_load():
+    cpu_file = '/tmp/cpu_load'
+    stat_cmd = 'mpstat -P ALL'
+    
+    # Write command output to file
+    w = open(cpu_file, "w")
+    w.write( get_cmd(stat_cmd) )
+    w.close()
+
+    # Vars
+    sys_load = {}
+    # Read file
+    f = open(cpu_file, 'r')
+    for line in f.readlines():
+        l = line.split()
+        # Exception
+        try:
+            if l[1] == 'all':
+                sys_load[l[1]] = { 'usr': l[2], 'nice': l[3], 'sys': l[4],
+                'iowait': l[5], 'soft': l[7], 'idle': l[11] }
+            elif l[1] == 'CPU':
+                continue
+            else:
+                sys_load[l[1]] = { 'usr': l[2], 'nice': l[3], 'sys': l[4],
+                'iowait': l[5], 'soft': l[7], 'idle': l[11] }
+        except:
+            continue
+    f.close()
+    os.remove(cpu_file)
 
 # Get system output. 
 # !!! Will be removed later !!!
 def get_cmd(cmd):
-    import os
-    return int(os.popen(cmd).read())
+    return os.popen(cmd).read()
 
 # End of system
 ###############
