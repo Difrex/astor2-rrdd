@@ -194,12 +194,12 @@ def graph_mem(rrd, db_type):
             "--vertical-label=Gb", 
             '--watermark=OpenSAN2', '-w 800', '-r',
             # '--lower-limit', '0', '-E', '-i', '-r',
-            "DEF:free="+ db +":free:AVERAGE",
-            "DEF:total="+ db +":total:AVERAGE",
+            "DEF:free="+ db +":free:MAX",
+            "DEF:total="+ db +":total:MAX",
             'CDEF:total_x=total,1024,*',
             'CDEF:free_x=total,1024,*',
-            "LINE1:free_x#0000FF:free\\n",
-            "LINE2:total_x#F00CC0:total\\n" )
+            "LINE1:free#0000FF:free\\n",
+            "LINE2:total#F00CC0:total\\n" )
 
 
 # Generate graphic for network interfaces
