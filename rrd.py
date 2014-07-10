@@ -2,9 +2,6 @@ from rrdsys import get_mem, get_traf, get_cmd, interfaces
 from update import *
 from create import new_db, check_db
 
-import os.path
-from os.path import join
-
 # RRD module
 import rrdtool
 
