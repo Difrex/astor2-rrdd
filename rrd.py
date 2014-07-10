@@ -100,6 +100,7 @@ def cpus():
             value = l[1]
             if int(value) >= phys:
                 phys = phys + 1
+    f.close()
 
     return phys
 
@@ -122,6 +123,7 @@ def cpu_cores():
                     cores = cores + 1
         except:
             continue
+    f.close()
 
     return cores
 
@@ -156,6 +158,8 @@ def cpu_load():
             continue
     f.close()
     os.remove(cpu_file)
+
+    return sys_load
 
 # Get system output. 
 # !!! Will be removed later !!!
@@ -266,7 +270,7 @@ def new_db(rrd, db_type):
     elif db_type == 'mem':
         create_mem(rrd_db)
     elif db_type == 'cpu':
-        create_cpu(rrd_db)
+        create_cpu(rrd)
 
 # Create new network DB
 def create_net(rrd):
@@ -302,16 +306,24 @@ def create_mem(rrd_db):
                   )
 
 # Create new CPU DB
-def create_cpu(rrd_db):
-    data_sources=[ 'DS:speed1:COUNTER:600:U:U',
-                'DS:speed2:COUNTER:600:U:U',
-                'DS:speed3:COUNTER:600:U:U' ]
-    # Create network database
-    rrdtool.create( rrd_db,
-                 '--start', '920804400',
-                 data_sources,
-                 'RRA:AVERAGE:0.5:1:24',
-                 'RRA:AVERAGE:0.5:6:10' )
+def create_cpu():
+    physicals = cpus()
+    cores = cpu_cores()
+
+    if physicals <= 1:
+        count = 0
+        db = '/tmp/' + count + 'cpu.rrd'
+        while count < cores:
+            data_sources=[ 'DS:speed1:COUNTER:600:U:U',
+                        'DS:speed2:COUNTER:600:U:U',
+                        'DS:speed3:COUNTER:600:U:U' ]
+            # Create network database
+            rrdtool.create( ,
+                         '--start', '920804400',
+                         data_sources,
+                         'RRA:AVERAGE:0.5:1:24',
+                         'RRA:AVERAGE:0.5:6:10' )
+            count = count + 1
 
 # End of rrdtool create functions
 #################################
