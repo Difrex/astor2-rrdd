@@ -156,8 +156,8 @@ def update_mem(rrd, db_type):
         print mem # Debug
         # Update rrd db
         print('Updating mem DB')
-        rrdtool.update( rrd_db, 'N:%s:%s:%s:%s:%s' % (int(mem['free']),
-            int(mem['total']), int(mem['buffers']), int(mem['cached']), mem['used']) )
+        rrdtool.update( rrd_db, 'N:%s:%s:%s:%s:%s' % (int(mem['free'])*1000,
+            int(mem['total'])*1000, int(mem['buffers'])*1000, int(mem['cached'])*1000, int(mem['used'])*1000 ))
 
         # Generate graph
         graph(rrd, db_type)
@@ -194,12 +194,12 @@ def graph_mem(rrd, db_type):
             "--vertical-label=Gb", 
             '--watermark=OpenSAN2', '-w 800', '-r',
             # '--lower-limit', '0', '-E', '-i', '-r',
-            "DEF:free="+ db +":free:MAX",
-            "DEF:total="+ db +":total:MAX",
-            'CDEF:total_x=total,1024,*',
-            'CDEF:free_x=total,1024,*',
-            "LINE1:free#0000FF:free\\n",
-            "LINE2:total#F00CC0:total\\n" )
+            "DEF:total="+ db +":total:AVERAGE",
+            "DEF:free="+ db +":free:AVERAGE",
+            "DEF:used="+ db +":used:AVERAGE",
+            "AREA:total#000000:Total memory\\n",
+            "AREA:used#aa0000:Used memory\\n",
+            "AREA:free#00FF00:Free memory\\n" )
 
 
 # Generate graphic for network interfaces
