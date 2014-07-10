@@ -168,20 +168,17 @@ def graph(rrd, db_type):
 def graph_mem(rrd, db_type):
     png = png_path + rrd[db_type] + '.png'
     db = db_path + rrd[db_type]
-    rrdtool.graph(png, '--start', 'end-120000s', '--width', '400',
-            "--vertical-label=Gb", "-M",
-            '--watermark=OpenSAN2', '-w 800',
-            '--lower-limit', '0', '-E', '-i', '-r',
-            "DEF:free="+ db +":free:LAST",
-            "DEF:total="+ db +":total:LAST",
-            # "DEF:buffers="+ db +":buffers:AVERAGE",
-            # "DEF:cached="+ db +":cached:AVERAGE",
-            # "DEF:used="+ db +":used:AVERAGE",
-            "AREA:free#0000FF:free\\n",
-            # "LINE2:cached#00FF00:cached\\r",
-            # "AREA:used#FF0000:used\\r",
-            "AREA:total#F00CC0:total\\n" )
-            # "LINE:buffers#222222:buffers\\r")
+    rrdtool.graph(png, '--start', '-1800', '--width', '400',
+            "--vertical-label=Gb", 
+            '--watermark=OpenSAN2', '-w 800', '-r',
+            # '--lower-limit', '0', '-E', '-i', '-r',
+            "DEF:free="+ db +":free:AVERAGE",
+            "DEF:total="+ db +":total:AVERAGE",
+            'CDEF:total_x=total,1024,*',
+            'CDEF:free_x=total,1024,*',
+            "LINE1:free_x#0000FF:free\\n",
+            "LINE2:total_x#F00CC0:total\\n" )
+
 
 # Generate graphic for network interfaces
 def graph_net(rrd):
@@ -189,9 +186,9 @@ def graph_net(rrd):
     for i in ifaces:
         png = png_path + i + '.' + rrd['net'] + '.png'
         db = db_path + i + '.' + rrd['net']
-        rrdtool.graph(png, '--start', 'end-2h',
+        rrdtool.graph(png, '--start', 'end-6h',
             '--title', 'Network interface ' + i,
-            '--width', '400', "--vertical-label=Num",
+            '--width', '400', "--vertical-label=bits/s",
             '--slope-mode', '-m', '1', '--dynamic-labels',
             '--watermark=OpenSAN2', '-w 600',
             '--lower-limit', '0', '-E', '-i', '-r',
@@ -223,35 +220,33 @@ def create_net(rrd):
     ifaces = interfaces()
     for i in ifaces:
         rrd_db = db_path + i + '.' + rrd['net']
-        data_sources=[ 'DS:in:DERIVE:600:0:12500000',
-                    'DS:out:DERIVE:600:0:12500000'
+        data_sources=[ 'DS:in:COUNTER:120:0:U',
+                    'DS:out:COUNTER:120:0:U'
                     ]
         # Create network database
         rrdtool.create( rrd_db,
                      '--start', '920804400',
                      data_sources,
-                     'RRA:AVERAGE:0.5:1:576',
-                     'RRA:AVERAGE:0.5:6:672',
-                     'RRA:AVERAGE:0.5:24:732',
-                     'RRA:AVERAGE:0.5:144:1460'
+                     'RRA:AVERAGE:0.5:1:360',
+                     'RRA:AVERAGE:0.5:10:1008',
+                     'RRA:AVERAGE:0.5:10:1008',
                     )
 
 # Create new memory DB
 def create_mem(rrd_db):
-    data_sources = [ 'DS:free:DERIVE:200:0:12500000',
-                'DS:total:DERIVE:200:0:12500000',
-                'DS:cached:DERIVE:200:0:12500000',
-                'DS:buffers:DERIVE:200:0:12500000',
-                'DS:used:DERIVE:200:0:12500000'
+    data_sources = [ 'DS:free:GAUGE:120:0:U',
+                'DS:total:GAUGE:120:0:U',
+                'DS:cached:GAUGE:120:0:U',
+                'DS:buffers:GAUGE:120:0:U',
+                'DS:used:GAUGE:120:0:U'
                 ]
     # Create network database
     rrdtool.create( rrd_db,
                  data_sources,
-                 'RRA:LAST:0.5:1:1',
-                 'RRA:LAST:0.5:6:10',
-                 'RRA:LAST:0.5:1:24',
-                 'RRA:LAST:0.5:1:24',
-                 'RRA:LAST:0.5:1:24' )
+                 'RRA:AVERAGE:0.5:1:360',
+                 'RRA:AVERAGE:0.5:10:1008,',
+                 'RRA:MAX:0.5:10:1008'
+                  )
 
 # Create new CPU DB
 def create_cpu(rrd_db):
