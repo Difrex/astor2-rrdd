@@ -1,3 +1,2 @@
-rrd.pyc
+*.pyc
 test.py
-rrdsys.pyc
