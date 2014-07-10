@@ -11,7 +11,7 @@ class App():
 
     def __init__(self):
         self.stdin_path = '/dev/null'
-        self.stdout_path = '/dev/tty' # or /dev/tty for debug
+        self.stdout_path = '/dev/null' # or /dev/tty for debug
         self.stderr_path = '/dev/tty'
         self.pidfile_path =  '/tmp/astor2-rrdd.pid'
         self.pidfile_timeout = 5
@@ -20,7 +20,7 @@ class App():
         while True:
             commit()
             logger.info('DB update')
-            time.sleep(15)
+            time.sleep(10)
 
 app = App()
 logger = logging.getLogger("Astor2Rrdd")

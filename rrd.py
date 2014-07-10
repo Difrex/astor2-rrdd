@@ -86,7 +86,7 @@ def get_mem():
 
 
 # Get phisicals CPU
-def cpu_id():
+def cpus():
     proc = '/proc/cpuinfo'
     f = open(proc, "r")
 
@@ -168,7 +168,7 @@ def update_net(rrd):
     for i in traffic.iteritems():
         rrd_db = db_path + i[0] + '.' + rrd['net']
         # Update rrd db
-        rrdtool.update(rrd_db, 'N:%s:%s' % (i[1]['in'], i[1]['out']))
+        rrdtool.update( rrd_db, 'N:%s:%s' % ( int(i[1]['in']), int(i[1]['out']) ))
         # Generate graph
         graph(rrd, 'net')
 
@@ -190,16 +190,17 @@ def graph(rrd, db_type):
 def graph_mem(rrd, db_type):
     png = png_path + rrd[db_type] + '.png'
     db = db_path + rrd[db_type]
-    rrdtool.graph(png, '--start', '-1800', '--width', '400',
+    rrdtool.graph(png, '--start', '-8192', '--width', '300', '-h', '150',
             "--vertical-label=Gb", 
-            '--watermark=OpenSAN2', '-w 800', '-r',
-            # '--lower-limit', '0', '-E', '-i', '-r',
+            '--watermark=OpenSAN2', '-r',
+            '--dynamic-labels',
+            '--lower-limit', '0', '-E', '-i', '-r',
             "DEF:total="+ db +":total:AVERAGE",
             "DEF:free="+ db +":free:AVERAGE",
             "DEF:used="+ db +":used:AVERAGE",
-            "AREA:total#000000:Total memory\\n",
-            "AREA:used#aa0000:Used memory\\n",
-            "AREA:free#00FF00:Free memory\\n" )
+            "AREA:total#000000:Total memory",
+            "AREA:used#aa0000:Used memory",
+            "AREA:free#00FF00:Free memory" )
 
 
 # Generate graphic for network interfaces
@@ -209,15 +210,15 @@ def graph_net(rrd):
         png = png_path + i + '.' + rrd['net'] + '.png'
         db = db_path + i + '.' + rrd['net']
         rrdtool.graph(png, '--start', 'end-6h',
-            '--title', 'Network interface ' + i,
+            '--title', 'Network interface ' + i, '-h', '150',
             '--width', '400', "--vertical-label=bits/s",
             '--slope-mode', '-m', '1', '--dynamic-labels',
-            '--watermark=OpenSAN2', '-w 600',
+            '--watermark=OpenSAN2', 
             '--lower-limit', '0', '-E', '-i', '-r',
             "DEF:in="+ db +":in:AVERAGE",
             "DEF:out="+ db +":out:AVERAGE",
-            "LINE1:in#0000FF:in",
-            "LINE2:out#00FF00:out\\n",
+            "AREA:out#FF0000:out:STACK",
+            "AREA:in#0000FF:in:STACK",
             )
 
 # End of create graph functions
