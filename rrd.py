@@ -97,11 +97,33 @@ def cpu_id():
         name = l[0][:-1]
         if name == 'physical id':
             value = l[1]
-            print name, value
             if int(value) >= phys:
                 phys = phys + 1
 
     return phys
+
+
+# Get CPU cores
+def cpu_cores():
+    proc = '/proc/cpuinfo'
+    f = open(proc, 'r')
+
+    # Cores counter
+    cores = 1
+    for line in f.readlines():
+        l = line.split(':')
+        name = re.split(r'(.+)\s\s+', l[0])
+        # Exception
+        try:
+            if name[1] == 'core id':
+                value = l[1]
+                if int(value) >= cores:
+                    cores = cores + 1
+        except:
+            continue
+
+    print cores
+    return cores
 
 
 # Get system output. 
