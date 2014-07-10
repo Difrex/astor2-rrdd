@@ -193,7 +193,7 @@ def graph_mem(rrd, db_type):
     rrdtool.graph(png, '--start', '-1800', '--width', '400',
             "--vertical-label=Gb", 
             '--watermark=OpenSAN2', '-w 800', '-r',
-            # '--lower-limit', '0', '-E', '-i', '-r',
+            '--lower-limit', '0', '-E', '-i', '-r',
             "DEF:total="+ db +":total:AVERAGE",
             "DEF:free="+ db +":free:AVERAGE",
             "DEF:used="+ db +":used:AVERAGE",
