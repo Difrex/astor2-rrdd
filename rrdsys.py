@@ -14,6 +14,7 @@ def interfaces():
     ifaces.remove('lo')
     return ifaces
 
+
 # Get traffic values
 def get_traf():
     ifaces = interfaces()
@@ -30,6 +31,7 @@ def get_traf():
             if i == net:
                 traffic[i] = { 'in': bytes[1], 'out': bytes[9] }
     return traffic
+
 
 # Get memory function
 def get_mem():
@@ -128,6 +130,7 @@ def cpu_load():
     os.remove(cpu_file)
 
     return sys_load
+
 
 # Get system output. 
 # !!! Will be removed later !!!

@@ -18,6 +18,7 @@ def update_db(rrd, db_type):
     elif db_type == 'mem':
         update_mem(rrd, db_type)
 
+
 # Update memory DB
 def update_mem(rrd, db_type):
         rrd_db = db_path + rrd[db_type]
@@ -33,6 +34,7 @@ def update_mem(rrd, db_type):
         # Generate graph
         graph(rrd, db_type)
         print('Memory graph generated')
+
 
 def update_net(rrd):
     traffic = get_traf()
