@@ -1,2 +1,2 @@
-rrd.pyc
+*.pyc
 test.py
