@@ -22,17 +22,25 @@ def graph(rrd, db_type):
 def graph_mem(rrd, db_type):
     png = png_path + rrd[db_type] + '.png'
     db = db_path + rrd[db_type]
-    rrdtool.graph(png, '--start', '-8192', '--width', '300', '-h', '150',
+    rrdtool.graph(png, '--start', '-16000', '--width', '300', '-h', '150',
             "--vertical-label=Gb", 
             '--watermark=OpenSAN2', '-r',
             '--dynamic-labels',
             '--lower-limit', '0', '-E', '-i', '-r',
             "DEF:total="+ db +":total:AVERAGE",
             "DEF:free="+ db +":free:AVERAGE",
+            "DEF:cached="+ db +":cached:AVERAGE",
+            "DEF:buffered="+ db +":buffers:AVERAGE",
             "DEF:used="+ db +":used:AVERAGE",
-            "AREA:total#000000:Total memory",
-            "AREA:used#aa0000:Used memory",
-            "AREA:free#00FF00:Free memory" )
+            "CDEF:mcached=used,cached,+",
+            "CDEF:mb=buffered,cached,-",
+            "CDEF:mbuffered=mb,used,+",
+            "CDEF:mfree=free,mbuffered,+",
+            "AREA:total#00FF00:Free memory",
+            #"AREA:mfree#00FF00:Free memory" ,
+            "AREA:mbuffered#ffff00:Buffered memory",
+            "AREA:mcached#00fff0: Cached memory",
+            "AREA:used#aa0000:Used memory")
 
 
 # Generate graphic for network interfaces
@@ -49,8 +57,8 @@ def graph_net(rrd):
             '--lower-limit', '0', '-E', '-i', '-r',
             "DEF:in="+ db +":in:AVERAGE",
             "DEF:out="+ db +":out:AVERAGE",
-            "AREA:out#FF0000:out:STACK",
-            "AREA:in#0000FF:in:STACK",
+            "LINE1:out#FF0000:out",
+            "LINE2:in#0000FF:in",
             )
 
 # End of create graph functions

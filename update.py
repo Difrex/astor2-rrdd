@@ -1,4 +1,4 @@
-from rrdsys import get_mem, get_traf, get_cmd, interfaces
+from rrdsys import get_mem, get_traf, get_cmd, interfaces, cpus, cpu_cores, cpu_load
 from graph import *
 # RRD module
 import rrdtool
@@ -17,6 +17,8 @@ def update_db(rrd, db_type):
         update_net(rrd)
     elif db_type == 'mem':
         update_mem(rrd, db_type)
+    elif db_type == 'cpu':
+        update_cpu(rrd)
 
 
 # Update memory DB
@@ -36,6 +38,7 @@ def update_mem(rrd, db_type):
         print('Memory graph generated')
 
 
+# Update network bases
 def update_net(rrd):
     traffic = get_traf()
     for i in traffic.iteritems():
@@ -44,6 +47,37 @@ def update_net(rrd):
         rrdtool.update( rrd_db, 'N:%s:%s' % ( int(i[1]['in']), int(i[1]['out']) ))
         # Generate graph
         graph(rrd, 'net')
+
+
+# Update cpu bases
+def update_cpu(rrd):
+    physicals = cpus()
+    cores = cpu_cores()
+    load = cpu_load()
+
+    # update all
+    db_all = db_path + rrd['cpu']
+    load_all = load['all']
+    update_cpu_db(db_all, load_all)
+
+    # update cores db
+    count = 0
+    while count < cores:
+        core_load = load[str(count)]
+        core_db = db_path + str(count) + rrd['cpu']
+        update_cpu_db(core_db, core_load)
+        count = count + 1
+    
+
+# Update cpudb
+def update_cpu_db(db, load):
+    rrdtool.update( db, 'N:%s:%s:%s:%s' % ( load['sys'], 
+        load['usr'], 
+        load['nice'], 
+        load['soft'] 
+        ) 
+    )
+    print db + ' updated'
 
 # End of update DB functions
 ############################
