@@ -1,4 +1,4 @@
-from rrdsys import get_mem, get_traf, get_cmd, interfaces, cpus, cpu_cores, sys_load
+from rrdsys import get_mem, get_traf, get_cmd, interfaces, cpus, cpu_cores, cpu_load
 from graph import *
 # RRD module
 import rrdtool
@@ -17,6 +17,8 @@ def update_db(rrd, db_type):
         update_net(rrd)
     elif db_type == 'mem':
         update_mem(rrd, db_type)
+    elif db_type == 'cpu':
+        update_cpu(rrd)
 
 
 # Update memory DB
@@ -51,24 +53,29 @@ def update_net(rrd):
 def update_cpu(rrd):
     physicals = cpus()
     cores = cpu_cores()
-    load = sys_load()
+    load = cpu_load()
 
     # update all
     db_all = db_path + rrd['cpu']
-    update_cpu_db(db_all)
+    load_all = load['all']
+    update_cpu_db(db_all, load_all)
 
     # update cores db
     count = 0
     while count < cores:
+        core_load = load[str(count)]
         core_db = db_path + str(count) + rrd['cpu']
-        update_cpu_db(core_db)
+        update_cpu_db(core_db, core_load)
         count = count + 1
     
 
 # Update cpudb
-def update_cpu_db(db):
-    rrdtool.update( db, 'N:%s:%s:%s:%s' % ( int(load['all']['sys']), 
-        int(load['all']['usr']), int(load['all']['nice']), int(load['all']['soft']) ) 
+def update_cpu_db(db, load):
+    rrdtool.update( db, 'N:%s:%s:%s:%s' % ( load['sys'], 
+        load['usr'], 
+        load['nice'], 
+        load['soft'] 
+        ) 
     )
     print db + ' updated'
 

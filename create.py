@@ -1,4 +1,4 @@
-from rrdsys import interfaces, cpus
+from rrdsys import interfaces, cpus, cpu_cores
 
 import os
 import os.path

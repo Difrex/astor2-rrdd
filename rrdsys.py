@@ -114,18 +114,25 @@ def cpu_load():
     f = open(cpu_file, 'r')
     for line in f.readlines():
         l = line.split()
+        
         # Exception
-        try:
-            if l[1] == 'all':
-                sys_load[l[1]] = { 'usr': l[2], 'nice': l[3], 'sys': l[4],
-                'iowait': l[5], 'soft': l[7], 'idle': l[11] }
-            elif l[1] == 'CPU':
-                continue
-            else:
-                sys_load[l[1]] = { 'usr': l[2], 'nice': l[3], 'sys': l[4],
-                'iowait': l[5], 'soft': l[7], 'idle': l[11] }
-        except:
-            continue
+        c = 2
+        while c < 12:
+            try:
+                num = l[c].split(',')
+                l[c] = int( num[0] )
+                if l[1] == 'all':
+                    sys_load[l[1]] = { 'usr': l[2], 'nice': l[3], 'sys': l[4],
+                    'iowait': l[5], 'soft': l[7], 'idle': l[11] }
+                elif l[1] == 'CPU':
+                    continue
+                else:
+                    sys_load[l[1]] = { 'usr': l[2], 'nice': l[3], 'sys': l[4],
+                    'iowait': l[5], 'soft': l[7], 'idle': l[11] }
+                c = c + 1
+            except:
+                c = c + 1
+
     f.close()
     os.remove(cpu_file)
 
