@@ -1,4 +1,4 @@
-from rrdsys import interfaces
+from rrdsys import interfaces, cpus
 
 import os
 import os.path
@@ -73,24 +73,24 @@ def create_mem(rrd_db):
                   )
 
 # Create new CPU DB
-def create_cpu():
+def create_cpu(rrd):
     physicals = cpus()
     cores = cpu_cores()
 
-    if physicals <= 1:
-        count = 0
-        while count < cores:
-            db = '/tmp/' + count + 'cpu.rrd'
-            data_sources=[ 'DS:speed1:COUNTER:600:U:U',
-                        'DS:speed2:COUNTER:600:U:U',
-                        'DS:speed3:COUNTER:600:U:U' ]
-            # Create network database
-            rrdtool.create( db,
-                         '--start', '920804400',
-                         data_sources,
-                         'RRA:AVERAGE:0.5:1:24',
-                         'RRA:AVERAGE:0.5:6:10' )
-            count = count + 1
+    count = 0
+    while count < cores:
+        db = '/tmp/' + count + 'cpu.rrd'
+        data_sources=[ 'DS:speed1:COUNTER:600:U:U',
+                    'DS:speed2:COUNTER:600:U:U',
+                    'DS:speed3:COUNTER:600:U:U' ]
+        # Create cpu database
+        rrdtool.create( db,
+                        '--start', '920804400',
+                        data_sources,
+                        'RRA:AVERAGE:0.5:1:24',
+                        'RRA:AVERAGE:0.5:6:10' )
+        print db + ' is created.'
+        count = count + 1
 
 # End of rrdtool create functions
 #################################
