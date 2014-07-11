@@ -1,4 +1,4 @@
-from rrdsys import interfaces, cpus
+from rrdsys import interfaces, cpus, cpu_cores
 
 import os
 import os.path
@@ -77,20 +77,49 @@ def create_cpu(rrd):
     physicals = cpus()
     cores = cpu_cores()
 
+    # Create all load avverage base
+    create_cpu_all(rrd)
+
+    # Create bases for cores
     count = 0
     while count < cores:
-        db = '/tmp/' + count + 'cpu.rrd'
-        data_sources=[ 'DS:speed1:COUNTER:600:U:U',
-                    'DS:speed2:COUNTER:600:U:U',
-                    'DS:speed3:COUNTER:600:U:U' ]
-        # Create cpu database
-        rrdtool.create( db,
-                        '--start', '920804400',
-                        data_sources,
-                        'RRA:AVERAGE:0.5:1:24',
-                        'RRA:AVERAGE:0.5:6:10' )
-        print db + ' is created.'
+        db = db_path + str(count) + rrd['cpu']
+        create_core(db)
         count = count + 1
+
+
+# Create base for all load avverage
+def create_cpu_all(rrd):
+    db = db_path + rrd['cpu']
+    data_sources=[ 'DS:sys:COUNTER:600:U:U',
+                'DS:user:COUNTER:600:U:U',
+                'DS:nice:COUNTER:600:U:U',
+                'DS:soft:COUNTER:600:U:U' ]
+    # Create cpu database
+    rrdtool.create( db,
+                    '--start', '920804400',
+                    data_sources,
+                    'RRA:AVERAGE:0.5:1:24',
+                    'RRA:AVERAGE:0.5:1:24',
+                    'RRA:AVERAGE:0.5:1:24',
+                    'RRA:AVERAGE:0.5:6:10' )
+    print db + ' is created.'
+
+# Create base for cores
+def create_core(db):
+    data_sources=[ 'DS:sys:COUNTER:600:U:U',
+                'DS:user:COUNTER:600:U:U',
+                'DS:nice:COUNTER:600:U:U',
+                'DS:soft:COUNTER:600:U:U' ]
+    # Create cpu database
+    rrdtool.create( db,
+                    '--start', '920804400',
+                    data_sources,
+                    'RRA:AVERAGE:0.5:1:24',
+                    'RRA:AVERAGE:0.5:1:24',
+                    'RRA:AVERAGE:0.5:1:24',
+                    'RRA:AVERAGE:0.5:6:10' )
+    print db + ' is created.'
 
 # End of rrdtool create functions
 #################################
