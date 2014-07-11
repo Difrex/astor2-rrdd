@@ -22,7 +22,7 @@ def graph(rrd, db_type):
 def graph_mem(rrd, db_type):
     png = png_path + rrd[db_type] + '.png'
     db = db_path + rrd[db_type]
-    rrdtool.graph(png, '--start', '-8192', '--width', '300', '-h', '150',
+    rrdtool.graph(png, '--start', '-16000', '--width', '300', '-h', '150',
             "--vertical-label=Gb", 
             '--watermark=OpenSAN2', '-r',
             '--dynamic-labels',
@@ -57,8 +57,8 @@ def graph_net(rrd):
             '--lower-limit', '0', '-E', '-i', '-r',
             "DEF:in="+ db +":in:AVERAGE",
             "DEF:out="+ db +":out:AVERAGE",
-            "AREA:out#FF0000:out:STACK",
-            "AREA:in#0000FF:in:STACK",
+            "LINE1:out#FF0000:out",
+            "LINE2:in#0000FF:in",
             )
 
 # End of create graph functions
