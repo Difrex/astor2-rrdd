@@ -29,10 +29,18 @@ def graph_mem(rrd, db_type):
             '--lower-limit', '0', '-E', '-i', '-r',
             "DEF:total="+ db +":total:AVERAGE",
             "DEF:free="+ db +":free:AVERAGE",
+            "DEF:cached="+ db +":cached:AVERAGE",
+            "DEF:buffered="+ db +":buffers:AVERAGE",
             "DEF:used="+ db +":used:AVERAGE",
-            "AREA:total#000000:Total memory",
-            "AREA:used#aa0000:Used memory",
-            "AREA:free#00FF00:Free memory" )
+            "CDEF:mcached=used,cached,+",
+            "CDEF:mb=buffered,cached,-",
+            "CDEF:mbuffered=mb,used,+",
+            "CDEF:mfree=free,mbuffered,+",
+            "AREA:total#00FF00:Free memory",
+            #"AREA:mfree#00FF00:Free memory" ,
+            "AREA:mbuffered#ffff00:Buffered memory",
+            "AREA:mcached#00fff0: Cached memory",
+            "AREA:used#aa0000:Used memory")
 
 
 # Generate graphic for network interfaces
