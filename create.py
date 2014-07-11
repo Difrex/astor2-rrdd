@@ -1,4 +1,4 @@
-from rrdsys import interfaces, cpus, cpu_cores
+from rrdsys import interfaces, cpus
 
 import os
 import os.path
@@ -74,7 +74,6 @@ def create_mem(rrd_db):
 
 # Create new CPU DB
 def create_cpu(rrd):
-    physicals = cpus()
     cores = cpu_cores()
 
     # Create all load avverage base
