@@ -77,13 +77,41 @@ def graph_cpu(rrd):
     # we creating only one graphic:
     # load average by core
     if physicals == 1:
+        core_db = {}
+        
         c = 0
         while c < cores:
-            pass
+            core_db[str(c)] = db_path + str(c) + rrd['cpu']
             c += 1
+        # Generate graph
+        # type(third position) can will be single or smp
+        generate_core(core_db, cores, 'single')
 
 
 # Generate cores by cpu graph
+def generate_core(db, cores, ph_type):
+    if ph_type == 'single':
+
+        # Not right function execute
+        rrdtool.graph(png, '--start', 'end-6h',
+                '--title', 'Load: ' + core, '-h', '150',
+                '--width', '400', "--vertical-label=bits/s",
+                '--slope-mode', '-m', '1', '--dynamic-labels',
+                '--watermark=OpenSAN2',
+                '--lower-limit', '0', '-E', '-i', '-r',
+                "DEF:sys="+ db +":sys:AVERAGE",
+                "DEF:user="+ db +":user:AVERAGE",
+                "LINE1:sys#FF0000:sys",
+                "LINE2:user#0000FF:user",
+                )
+    elif:
+        pass
+    else:
+        pass
+
+
+
+# Generate all load average graph
 def generate_cpu(png, db, core):
     # Rewrite this
     rrdtool.graph(png, '--start', 'end-6h',
