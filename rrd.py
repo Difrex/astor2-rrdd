@@ -1,7 +1,3 @@
-# Copyright 2014 Denis Zheleztsov <difrex.punk@gmail.com>
-#                Ilya Oleksiv <ioleksiv@gmail.com>
-# This is free software. Some rights reserved
-
 from rrdsys import get_mem, get_traf, get_cmd, interfaces
 from update import *
 from create import new_db, check_db

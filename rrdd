@@ -1,4 +1,8 @@
 #!/usr/bin/python2.7
+# Copyright 2014 Denis Zheleztsov <difrex.punk@gmail.com>
+#                Ilya Oleksiv <ioleksiv@gmail.com>
+# This is free software. Some rights reserved.
+
 #standard python libs
 import logging
 import time
