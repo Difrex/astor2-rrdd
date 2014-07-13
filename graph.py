@@ -91,7 +91,6 @@ def graph_cpu(rrd):
 # Generate cores by cpu graph
 def generate_core(db, cores, ph_type):
     if ph_type == 'single':
-
         # Not right function execute
         rrdtool.graph(png, '--start', 'end-6h',
                 '--title', 'Load: ' + core, '-h', '150',
