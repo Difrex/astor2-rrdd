@@ -1,4 +1,4 @@
-from rrdsys import interfaces, get_cores_by_phys
+from rrdsys import interfaces, get_cores_by_phys, cpus
 
 # RRD module
 import rrdtool
@@ -64,25 +64,38 @@ def graph_net(rrd):
 
 # Generate CPU graph
 def graph_cpu(rrd):
+    physicals = cpus()
     cores = get_cores_by_phys()
     all_load_db = db_path + rrd['cpu']
 
     # generate all load avverage graphic
-    generate_cpu(rrd, all_load_db, 'All')
+    png = png_path + 'All' + rrd['cpu'] + '.png'
+    generate_cpu(png, all_load_db, 'All')
+
+    # Cores processing
+    # If only one physical CPU in system
+    # we creating only one graphic:
+    # load average by core
+    if physicals == 1:
+        c = 0
+        while c < cores:
+            pass
+            c += 1
 
 
-def generate_cpu(rrd, db, core):
-    png = png_path + core + rrd['cpu'] + '.png'
+# Generate cores by cpu graph
+def generate_cpu(png, db, core):
+    # Rewrite this
     rrdtool.graph(png, '--start', 'end-6h',
             '--title', 'Load: ' + core, '-h', '150',
             '--width', '400', "--vertical-label=bits/s",
             '--slope-mode', '-m', '1', '--dynamic-labels',
-            '--watermark=OpenSAN2', 
+            '--watermark=OpenSAN2',
             '--lower-limit', '0', '-E', '-i', '-r',
-            "DEF:in="+ db +":in:AVERAGE",
-            "DEF:out="+ db +":out:AVERAGE",
-            "LINE1:out#FF0000:out",
-            "LINE2:in#0000FF:in",
+            "DEF:sys="+ db +":sys:AVERAGE",
+            "DEF:user="+ db +":user:AVERAGE",
+            "LINE1:sys#FF0000:sys",
+            "LINE2:user#0000FF:user",
             )
 
 
