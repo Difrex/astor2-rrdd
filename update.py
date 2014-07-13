@@ -67,6 +67,8 @@ def update_cpu(rrd):
         core_db = db_path + str(count) + rrd['cpu']
         update_cpu_db(core_db, core_load)
         count = count + 1
+    graph(rrd, 'cpu')
+    print "CPU graph generated"
     
 
 # Update cpudb

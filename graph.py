@@ -16,6 +16,8 @@ def graph(rrd, db_type):
         print('Net graphs generated')
     elif db_type == 'mem':
         graph_mem(rrd, db_type)
+    elif db_type == 'cpu':
+        graph_cpu(rrd)
 
 
 # Generate graphic for memory usage
@@ -68,7 +70,7 @@ def graph_cpu(rrd):
     cores = get_cores_by_phys()
     all_load_db = db_path + rrd['cpu']
 
-    # generate all load avverage graphic
+    # generate all load average graphic
     png = png_path + 'All' + rrd['cpu'] + '.png'
     generate_cpu(png, all_load_db, 'All')
 
@@ -81,7 +83,8 @@ def graph_cpu(rrd):
         
         c = 0
         while c < cores:
-            core_db[str(c)] = db_path + str(c) + rrd['cpu']
+            core_db[str(c)] = {'db': db_path + str(c) + rrd['cpu'], 
+                            'png': png_path + str(c) + rrd['cpu'] + '.png' }
             c += 1
         # Generate graph
         # type(third position) can will be single or smp
@@ -92,19 +95,19 @@ def graph_cpu(rrd):
 def generate_core(db, cores, ph_type):
     if ph_type == 'single':
         # Not right function execute
-        rrdtool.graph(png, '--start', 'end-6h',
-                '--title', 'Load: ' + core, '-h', '150',
-                '--width', '400', "--vertical-label=bits/s",
+        rrdtool.graph(db['0']['png'], '--start', 'end-6h',
+                '--title', 'Load: ' + '0', '-h', '150',
+                '--width', '400', "--vertical-label=percent",
                 '--slope-mode', '-m', '1', '--dynamic-labels',
-                '--watermark=OpenSAN2',
+                '--watermark=OpenSAN2', '--upper-limit', '100',
                 '--lower-limit', '0', '-E', '-i', '-r',
-                "DEF:sys="+ db +":sys:AVERAGE",
-                "DEF:user="+ db +":user:AVERAGE",
+                "DEF:sys="+ db['0']['db'] +":sys:AVERAGE",
+                "DEF:user="+ db['0']['db'] +":user:AVERAGE",
                 "LINE1:sys#FF0000:sys",
                 "LINE2:user#0000FF:user",
                 )
-    elif:
-        pass
+    # elif:
+    #     pass
     else:
         pass
 
