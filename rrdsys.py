@@ -98,6 +98,15 @@ def cpu_cores():
     return cores
 
 
+# Get cores by physical
+def get_cores_by_phys():
+    cores = cpu_cores()
+    phys = cpus()
+    cores_by_cpu = int(cores)/int(phys)
+
+    return cores_by_cpu
+
+
 # Get load average
 def cpu_load():
     cpu_file = '/tmp/cpu_load'
