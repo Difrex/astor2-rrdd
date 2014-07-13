@@ -1,4 +1,4 @@
-from rrdsys import interfaces
+from rrdsys import interfaces, get_cores_by_phys
 
 # RRD module
 import rrdtool
@@ -60,6 +60,31 @@ def graph_net(rrd):
             "LINE1:out#FF0000:out",
             "LINE2:in#0000FF:in",
             )
+
+
+# Generate CPU graph
+def graph_cpu(rrd):
+    cores = get_cores_by_phys()
+    all_load_db = db_path + rrd['cpu']
+
+    # generate all load avverage graphic
+    generate_cpu(rrd, all_load_db, 'All')
+
+
+def generate_cpu(rrd, db, core):
+    png = png_path + core + rrd['cpu'] + '.png'
+    rrdtool.graph(png, '--start', 'end-6h',
+            '--title', 'Load: ' + core, '-h', '150',
+            '--width', '400', "--vertical-label=bits/s",
+            '--slope-mode', '-m', '1', '--dynamic-labels',
+            '--watermark=OpenSAN2', 
+            '--lower-limit', '0', '-E', '-i', '-r',
+            "DEF:in="+ db +":in:AVERAGE",
+            "DEF:out="+ db +":out:AVERAGE",
+            "LINE1:out#FF0000:out",
+            "LINE2:in#0000FF:in",
+            )
+
 
 # End of create graph functions
 ###############################
