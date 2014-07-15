@@ -117,24 +117,29 @@ def cpu_load():
         
         # Exception
         c = 2
-        while c < 12:
-            try:
-                num = l[c].split(',')
-                l[c] = int( num[0] )
-                if l[1] == 'all':
-                    sys_load[l[1]] = { 'usr': l[2], 'nice': l[3], 'sys': l[4],
-                    'iowait': l[5], 'soft': l[7], 'idle': l[11] }
-                elif l[1] == 'CPU':
-                    continue
-                else:
-                    sys_load[l[1]] = { 'usr': l[2], 'nice': l[3], 'sys': l[4],
-                    'iowait': l[5], 'soft': l[7], 'idle': l[11] }
-                c = c + 1
-            except:
-                c = c + 1
-
-    f.close()
+        while c < 12: 
+            try: 
+                num = l[c].split(',') 
+                if l[c]!='all':
+                    l[c] = int(num[0]) 
+                if l[2] == 'all': 
+                    sys_load['all'] = { 'usr': int(float(l[3])*100), 'nice': int(float(l[4])*100), 'sys': int(float(l[5])*100), 
+                    'iowait': int(float(l[6])*100), 'soft': int(float(l[7])*100), 'idle': int(float(l[11])*100)} 
+                elif l[2] == 'CPU': 
+                    continue 
+                else: 
+                    print(l[2])
+                    sys_load[str(l[2])] = { 'usr': int(float(l[3])*100), 'nice': int(float(l[4])*100), 'sys': int(float(l[5])*100), 
+                    'iowait': int(float(l[6])*100), 'soft': int(float(l[7])*100), 'idle': int(float(l[11])*100)} 
+  
+                c = c + 1 
+            except: 
+                c = c + 1 
+ 
+    
+    f.close() 
     os.remove(cpu_file)
+    print sys_load
 
     return sys_load
 

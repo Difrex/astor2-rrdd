@@ -55,8 +55,11 @@ def update_cpu(rrd):
     cores = cpu_cores()
     load = cpu_load()
 
+
     # update all
     db_all = db_path + rrd['cpu']
+    
+    print(load)
     load_all = load['all']
     update_cpu_db(db_all, load_all)
 
