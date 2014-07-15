@@ -32,14 +32,14 @@ def graph_mem(rrd, db_type):
             "DEF:cached="+ db +":cached:AVERAGE",
             "DEF:buffered="+ db +":buffers:AVERAGE",
             "DEF:used="+ db +":used:AVERAGE",
-            "CDEF:mcached=used,cached,+",
-            "CDEF:mb=buffered,cached,-",
-            "CDEF:mbuffered=mb,used,+",
+            "CDEF:mbuffered=used,buffered,+",
+            "CDEF:mc=cached,buffered,-",
+            "CDEF:mcached=mc,used,+",
             "CDEF:mfree=free,mbuffered,+",
             "AREA:total#00FF00:Free memory",
             #"AREA:mfree#00FF00:Free memory" ,
-            "AREA:mbuffered#ffff00:Buffered memory",
             "AREA:mcached#00fff0: Cached memory",
+            "AREA:mbuffered#ffff00:Buffered memory",
             "AREA:used#aa0000:Used memory")
 
 
