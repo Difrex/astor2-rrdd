@@ -35,7 +35,6 @@ def update_mem(rrd, db_type):
 
         # Generate graph
         graph(rrd, db_type)
-        print('Memory graph generated')
 
 
 # Update network bases
@@ -62,6 +61,8 @@ def update_cpu(rrd):
     print(load)
     load_all = load['all']
     update_cpu_db(db_all, load_all)
+    print(db_all)
+    graph(db_all,'cpu')
 
     # update cores db
     count = 0
