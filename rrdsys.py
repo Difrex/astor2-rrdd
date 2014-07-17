@@ -127,12 +127,14 @@ def cpu_load():
         # Exception
         c = 2
         while c < 12: 
-            try: 
-                num = l[c].split(',') 
-                if l[c]!='all':
+            try:
+                # I don't understand what is it. 2Iknups: Try to comment the code, pls :)
+                # YOU_COMMENTS_HERE
+                num = l[c].split(',')
+                if l[c] != 'all':
                     l[c] = int(num[0]) 
-                if l[2] == 'all': 
-                    sys_load['all'] = { 'usr': int(float(l[3])*100), 'nice': int(float(l[4])*100), 'sys': int(float(l[5])*100), 
+                if l[2] == 'all':
+                    sys_load['all'] = { 'usr': int(float(l[3])*100), 'nice': int(float(l[4])*100), 'sys': int(float(l[5])*100),
                     'iowait': int(float(l[6])*100), 'soft': int(float(l[7])*100), 'idle': int(float(l[11])*100)} 
                 elif l[2] == 'CPU': 
                     continue 
@@ -146,7 +148,8 @@ def cpu_load():
                 c = c + 1 
  
     
-    f.close() 
+    f.close()
+    # Remove output file
     os.remove(cpu_file)
     print sys_load
 
