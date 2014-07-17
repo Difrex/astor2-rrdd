@@ -19,7 +19,6 @@ def graph(rrd, db_type):
         print('Memory graph generated')
     elif db_type == 'cpu':
         graph_cpu(rrd)
-        print('Cpu graph generated')
 
     
 
@@ -138,31 +137,35 @@ def graph_cpu(rrd):
         
         c = 0
         while c < cores:
+            num=str(c)
             core_db[str(c)] = {'db': db_path + str(c) + rrd['cpu'], 
                             'png': png_path + str(c) + rrd['cpu'] + '.png' }
             c += 1
         # Generate graph
         # type(third position) can will be single or smp
-        generate_core(core_db, cores, 'single')
+            generate_core(core_db,num, cores, 'single')
+            print "Generate core graph"
 
 
 # Generate cores by cpu graph
-def generate_core(db, cores, ph_type):
+def generate_core(db,num, cores, ph_type):
     if ph_type == 'single':
         # Not right function execute
-        rrdtool.graph(db['0']['png'], '--start', 'end-6h',
-                '--title', 'Load: ' + '0', '-h', '150',
-                '--width', '400', "--vertical-label=percent",
-                '--slope-mode', '-m', '1', '--dynamic-labels',
-                '--watermark=OpenSAN2', '--upper-limit', '100',
-                '--lower-limit', '0', '-E', '-i', '-r',
-                "DEF:sys="+ db['0']['db'] +":sys:AVERAGE",
-                "DEF:user="+ db['0']['db'] +":user:AVERAGE",
-                "LINE1:sys#FF0000:sys",
-                "LINE2:user#0000FF:user",
-                )
-    # elif:
-    #     pass
+        rrdtool.graph(db[num]['png'], '--start', '-46000', '--width', '300', '-h', '150',
+            '--title', 'Load: ' + num,
+            '--vertical-label=Percents', 
+            '-S 60',
+            '--slope-mode',
+            '--rigid',
+            '--watermark=OpenSAN2',
+            '--dynamic-labels',
+            '--lower-limit', '0', '-E', '-i', 
+            #'-r',
+            "DEF:sys="+ db[num]['db'] +":sys:AVERAGE",
+            "DEF:user="+ db[num]['db'] +":user:AVERAGE",
+            "AREA:user#0000FF:user",
+            "AREA:sys#FF0000:sys",
+            )
     else:
         pass
 
@@ -173,14 +176,16 @@ def generate_cpu(png, db, core):
     # Rewrite this
     rrdtool.graph(png, '--start', 'end-6h',
             '--title', 'Load: ' + core, '-h', '150',
-            '--width', '400', "--vertical-label=bits/s",
+            '--width', '400', "--vertical-label=Percents",
             '--slope-mode', '-m', '1', '--dynamic-labels',
             '--watermark=OpenSAN2',
             '--lower-limit', '0', '-E', '-i', '-r',
             "DEF:sys="+ db +":sys:AVERAGE",
             "DEF:user="+ db +":user:AVERAGE",
-            "LINE1:sys#FF0000:sys",
-            "LINE2:user#0000FF:user",
+            "CDEF:s=sys,100,/",
+            "CDEF:u=user,100,/",
+            "AREA:u#0000FF:user",
+            "AREA:s#FF0000:sys",
             )
 
 

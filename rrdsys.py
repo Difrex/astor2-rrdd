@@ -121,7 +121,9 @@ def cpu_load():
     sys_load = {}
     # Read file
     f = open(cpu_file, 'r')
-    for line in f.readlines():
+    lines=f.readlines()
+    for line in lines[3:len(lines)]:
+        
         l = line.split()
         
         # Exception
@@ -131,19 +133,14 @@ def cpu_load():
                 # I don't understand what is it. 2Iknups: Try to comment the code, pls :)
                 # YOU_COMMENTS_HERE
                 # If we use float numbers and *100 we don't need to split, just replace
-                num = l[c].replace(',', '.')
-                if l[c] != 'all':
-                    l[c] = num
+                num = l[c].split(',')
+                
                 if l[2] == 'all':
                     sys_load['all'] = { 'usr': int(float(l[3])*100), 'nice': int(float(l[4])*100), 'sys': int(float(l[5])*100),
                     'iowait': int(float(l[6])*100), 'soft': int(float(l[7])*100), 'idle': int(float(l[11])*100)} 
-                elif l[2] == 'CPU': 
-                    continue 
-                else: 
-                    print(l[2])
+                else:
                     sys_load[str(l[2])] = { 'usr': int(float(l[3])*100), 'nice': int(float(l[4])*100), 'sys': int(float(l[5])*100), 
                     'iowait': int(float(l[6])*100), 'soft': int(float(l[7])*100), 'idle': int(float(l[11])*100)} 
-  
                 c = c + 1 
             except: 
                 c = c + 1 
@@ -152,7 +149,6 @@ def cpu_load():
     f.close()
     # Remove output file
     os.remove(cpu_file)
-    print sys_load
 
     return sys_load
 
