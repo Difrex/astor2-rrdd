@@ -130,9 +130,10 @@ def cpu_load():
             try:
                 # I don't understand what is it. 2Iknups: Try to comment the code, pls :)
                 # YOU_COMMENTS_HERE
-                num = l[c].split(',')
+                # If we use float numbers and *100 we don't need to split, just replace
+                num = l[c].replace(',', '.')
                 if l[c] != 'all':
-                    l[c] = int(num[0]) 
+                    l[c] = float(num)
                 if l[2] == 'all':
                     sys_load['all'] = { 'usr': int(float(l[3])*100), 'nice': int(float(l[4])*100), 'sys': int(float(l[5])*100),
                     'iowait': int(float(l[6])*100), 'soft': int(float(l[7])*100), 'idle': int(float(l[11])*100)} 
