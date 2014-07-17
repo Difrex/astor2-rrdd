@@ -62,7 +62,7 @@ def update_cpu(rrd):
     load_all = load['all']
     update_cpu_db(db_all, load_all)
     print(db_all)
-    graph(db_all,'cpu')
+    graph(rrd,'cpu')
 
     # update cores db
     count = 0
