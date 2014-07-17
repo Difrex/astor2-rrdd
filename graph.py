@@ -160,11 +160,16 @@ def generate_core(db,num, cores, ph_type):
             '--watermark=OpenSAN2',
             '--dynamic-labels',
             '--lower-limit', '0', '-E', '-i', 
+            '--upper-limit', '100',
             #'-r',
             "DEF:sys="+ db[num]['db'] +":sys:AVERAGE",
             "DEF:user="+ db[num]['db'] +":user:AVERAGE",
-            "AREA:user#0000FF:user",
-            "AREA:sys#FF0000:sys",
+            "CDEF:s=sys,10000,*",
+            "CDEF:u=user,10000,*",
+            "AREA:s#FF0000:sys",
+            "AREA:u#0000FF:user",
+            "LINE1:u#0000FF",
+            "LINE1:s#FF0000"
             )
     else:
         pass
@@ -177,15 +182,18 @@ def generate_cpu(png, db, core):
     rrdtool.graph(png, '--start', 'end-6h',
             '--title', 'Load: ' + core, '-h', '150',
             '--width', '400', "--vertical-label=Percents",
-            '--slope-mode', '-m', '1', '--dynamic-labels',
+            '--slope-mode', '--dynamic-labels',
             '--watermark=OpenSAN2',
             '--lower-limit', '0', '-E', '-i', '-r',
+            '--upper-limit', '100',
             "DEF:sys="+ db +":sys:AVERAGE",
             "DEF:user="+ db +":user:AVERAGE",
-            "CDEF:s=sys,100,/",
-            "CDEF:u=user,100,/",
-            "AREA:u#0000FF:user",
+            "CDEF:s=sys,10000,*",
+            "CDEF:u=user,10000,*",
             "AREA:s#FF0000:sys",
+            "AREA:u#0000FF:user",
+            "LINE1:u#0000FF",
+            "LINE1:s#FF0000"
             )
 
 
