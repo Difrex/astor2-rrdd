@@ -31,11 +31,10 @@ def update_mem(rrd, db_type):
         # Update rrd db
         print('Updating mem DB')
         rrdtool.update( rrd_db, 'N:%s:%s:%s:%s:%s' % (int(mem['free'])*1000,
-            int(mem['total'])*1000, int(mem['buffers'])*1000, int(mem['cached'])*1000, int(mem['used'])*1000 ))
+            int(mem['total'])*1000,  int(mem['cached'])*1000,int(mem['buffers'])*1000, int(mem['used'])*1000 ))
 
         # Generate graph
         graph(rrd, db_type)
-        print('Memory graph generated')
 
 
 # Update network bases
@@ -55,10 +54,15 @@ def update_cpu(rrd):
     cores = cpu_cores()
     load = cpu_load()
 
+
     # update all
     db_all = db_path + rrd['cpu']
+    
+    print(load)
     load_all = load['all']
     update_cpu_db(db_all, load_all)
+    print(db_all)
+    graph(db_all,'cpu')
 
     # update cores db
     count = 0
