@@ -118,7 +118,9 @@ def cpu_load():
         # Exception
         c = 2
         while c < 12: 
-            try: 
+            try:
+                # I don't understand what is it. 2Iknups: Try to comment the code, pls :)
+                # YOU_COMMENTS_HERE
                 num = l[c].split(',')
                 if l[c] != 'all':
                     l[c] = int(num[0]) 
