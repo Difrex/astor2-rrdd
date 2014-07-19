@@ -1,4 +1,5 @@
 # RRDd
+
 RRD collection and graph generation daemon.
 
 ## Create dirrectories
@@ -7,10 +8,10 @@ RRD collection and graph generation daemon.
 	mkdir -p /var/run/astor2-rrdd/
 	mkdir -p /var/log/astor2-rrdd/
 
-## Install modules
+## Install requirements
 
-	yum install python-daemon
-	apt-get install python-daemon
+	yum install python-daemon sysstat rrdtool-python
+	apt-get install python-daemon sysstat python-rrdtool
 
 ## Usage
 	
