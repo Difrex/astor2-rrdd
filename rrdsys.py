@@ -121,39 +121,30 @@ def cpu_load():
     sys_load = {}
     # Read file
     f = open(cpu_file, 'r')
-    lines=f.readlines()
-    for line in f.readline():
-        
+    for line in f.readlines():
         l = line.split()
-        print l
         
         # Exception
         c = 2
         while c < 12:
             try:
-                # I don't understand what is it. 2Iknups: Try to comment the code, pls :)
-                # YOU_COMMENTS_HERE
-                # If we use float numbers and *100 we don't need to split, just replace
-                num = l[c].replace(',', '.')
-                
-                if l[2] == 'all':
-                    sys_load['all'] = { 'usr': int(float(l[3])*100), 'nice': int(float(l[4])*100), 'sys': int(float(l[5])*100),
-                    'iowait': int(float(l[6])*100), 'soft': int(float(l[7])*100), 'idle': int(float(l[11])*100)}
-                elif l[2] == 'CPU':
+                num = l[c].split(',')
+                l[c] = int( num[0] )
+                if l[1] == 'all':
+                    sys_load[l[1]] = { 'usr': l[2], 'nice': l[3], 'sys': l[4],
+                    'iowait': l[5], 'soft': l[7], 'idle': l[11] }
+                elif l[1] == 'CPU':
                     continue
                 else:
-                    sys_load[str(l[2])] = { 'usr': int(float(l[3])*100), 'nice': int(float(l[4])*100), 'sys': int(float(l[5])*100), 
-                    'iowait': int(float(l[6])*100), 'soft': int(float(l[7])*100), 'idle': int(float(l[11])*100)} 
-                c = c + 1 
-            except: 
-                c = c + 1 
- 
-    
-    f.close()
-    # Remove output file
-#    os.remove(cpu_file)
+                    sys_load[l[1]] = { 'usr': l[2], 'nice': l[3], 'sys': l[4],
+                    'iowait': l[5], 'soft': l[7], 'idle': l[11] }
+                c = c + 1
+            except:
+                c = c + 1
 
-    print sys_load
+    f.close()
+    os.remove(cpu_file)
+
     return sys_load
 
 
