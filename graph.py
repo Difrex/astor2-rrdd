@@ -160,7 +160,7 @@ def generate_core(db,num, cores, ph_type):
             '--watermark=OpenSAN2',
             '--dynamic-labels',
             '--lower-limit', '0', '-E', '-i', 
-            '--upper-limit', '100',
+            #'--upper-limit', '100',
             #'-r',
             "DEF:sys="+ db[num]['db'] +":sys:AVERAGE",
             "DEF:user="+ db[num]['db'] +":user:AVERAGE",
