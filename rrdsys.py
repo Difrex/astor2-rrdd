@@ -98,6 +98,37 @@ def cpu_cores():
     return cores
 
 
+# Check hyper-threading
+def check_ht():
+    phys_cores = cpu_cores()
+    mpout = '/tmp/mpout'
+
+    f = open( mpout, 'w' )
+    f.write( get_cmd( 'mpstat | head -n 1' ) )
+    f.close
+
+    f = open( mpout, 'r' )
+
+    num = 0
+    for i in f.readlines():
+        l = i.split()
+        try:
+            num = int( l[5][-1:] )
+        except:
+            num = -1
+
+    f.close
+
+    os.remove(mpout)
+
+    if phys_cores == num:
+        return 0
+    elif phys_cores < num:
+        return 1
+    else:
+        return -1
+
+
 # Get cores by physical
 def get_cores_by_phys():
     cores = cpu_cores()
@@ -126,18 +157,19 @@ def cpu_load():
         
         # Exception
         c = 2
+        # Parsing mpstat output
         while c < 12:
             try:
                 num = l[c].split(',')
                 l[c] = int( num[0] )
                 if l[1] == 'all':
-                    sys_load[l[1]] = { 'usr': l[2], 'nice': l[3], 'sys': l[4],
-                    'iowait': l[5], 'soft': l[7], 'idle': l[11] }
+                    sys_load[l[1]] = { 'usr': int(l[2])*100, 'nice': int(l[3])*100, 'sys': int(l[4])*100,
+                    'iowait': int(l[5])*100, 'soft': int(l[7])*100, 'idle': int(l[11]) }
                 elif l[1] == 'CPU':
                     continue
                 else:
-                    sys_load[l[1]] = { 'usr': l[2], 'nice': l[3], 'sys': l[4],
-                    'iowait': l[5], 'soft': l[7], 'idle': l[11] }
+                    sys_load[l[1]] = { 'usr': int(l[2]), 'nice': int(l[3])*100, 'sys': int(l[4])*100,
+                    'iowait': int(l[5])*100, 'soft': int(l[7])*100, 'idle': int(l[11])*100 }
                 c = c + 1
             except:
                 c = c + 1
