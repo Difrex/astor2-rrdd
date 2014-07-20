@@ -112,7 +112,10 @@ def check_ht():
     num = 0
     for i in f.readlines():
         l = i.split()
-        num = int( l[5][-1:] )
+        try:
+            num = int( l[5][-1:] )
+        except:
+            num = -1
 
     f.close
 
