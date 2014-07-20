@@ -1,4 +1,4 @@
-from rrdsys import interfaces, cpus, cpu_cores
+from rrdsys import interfaces, cpus, cpu_cores, check_ht
 
 import os
 import os.path
@@ -75,6 +75,10 @@ def create_mem(rrd_db):
 # Create new CPU DB
 def create_cpu(rrd):
     cores = cpu_cores()
+
+    # Check hyper threading
+    if check_ht() == 1:
+        cores = cores * 2
 
     # Create all load avverage base
     create_cpu_all(rrd)
