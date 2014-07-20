@@ -101,8 +101,25 @@ def cpu_cores():
 # Check hyper-threading
 def check_ht():
     phys_cores = cpu_cores()
-    mpout = get_cmd('mpstat')
+    mpout = get_cmd('mpstat | head -n 1')
     
+    f = open('/tmp/mpout', 'w')
+    f.write(mpout)
+    f.close
+
+    f = open('/tmp/mpout', 'r')
+
+    num = 0
+    for i in f.readlines():
+        l = i.split()
+        num = int(l[5][-1:])
+
+    if phys_cores == num:
+        return 0
+    elif phys_cores < num:
+        return 1
+    else:
+        return -1
 
 
 # Get cores by physical
