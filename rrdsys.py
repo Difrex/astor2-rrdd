@@ -101,18 +101,22 @@ def cpu_cores():
 # Check hyper-threading
 def check_ht():
     phys_cores = cpu_cores()
-    mpout = get_cmd('mpstat | head -n 1')
-    
-    f = open('/tmp/mpout', 'w')
-    f.write(mpout)
+    mpout = '/tmp/mpout'
+
+    f = open( mpout, 'w' )
+    f.write( get_cmd( 'mpstat | head -n 1' ) )
     f.close
 
-    f = open('/tmp/mpout', 'r')
+    f = open( mpout, 'r' )
 
     num = 0
     for i in f.readlines():
         l = i.split()
-        num = int(l[5][-1:])
+        num = int( l[5][-1:] )
+
+    f.close
+
+    os.remove(mpout)
 
     if phys_cores == num:
         return 0
