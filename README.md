@@ -16,3 +16,8 @@ RRD collection and graph generation daemon.
 ## Usage
 	
 	./rrdd [start|stop|restart]
+
+## License
+
+The BSD 3-Clause License. 
+You can find full text in COPYING file.
