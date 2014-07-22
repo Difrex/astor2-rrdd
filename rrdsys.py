@@ -158,18 +158,22 @@ def cpu_load():
         # Exception
         c = 2
         # Parsing mpstat output
+        print(l)
         while c < 12:
             try:
-                num = l[c].split(',')
-                l[c] = int( num[0] )
+                num = l[c].replace(',','.')
+                num = num.replace('.','')
+                print(l[c])
+                print(num)
+                l[c] = int( num )
                 if l[1] == 'all':
-                    sys_load[l[1]] = { 'usr': int(l[2])*100, 'nice': int(l[3])*100, 'sys': int(l[4])*100,
-                    'iowait': int(l[5])*100, 'soft': int(l[7])*100, 'idle': int(l[11]) }
+                    sys_load[l[1]] = { 'usr': int(l[2]), 'nice': int(l[3]), 'sys': int(l[4]),
+                    'iowait': int(l[5]), 'soft': int(l[7]), 'idle': int(l[11]) }
                 elif l[1] == 'CPU':
                     continue
                 else:
-                    sys_load[l[1]] = { 'usr': int(l[2]), 'nice': int(l[3])*100, 'sys': int(l[4])*100,
-                    'iowait': int(l[5])*100, 'soft': int(l[7])*100, 'idle': int(l[11])*100 }
+                    sys_load[l[1]] = { 'usr': int(l[2]), 'nice': int(l[3]), 'sys': int(l[4]),
+                    'iowait': int(l[5]), 'soft': int(l[7]), 'idle': int(l[11]) }
                 c = c + 1
             except:
                 c = c + 1

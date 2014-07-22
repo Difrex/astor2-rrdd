@@ -159,6 +159,8 @@ def generate_core(db,num, cores, ph_type):
             '--rigid',
             '--watermark=OpenSAN2',
             '--dynamic-labels',
+            '--lower-limit', '0', '-E', '-i', '-r',
+            '--upper-limit', '100',
             '--lower-limit', '0', '-E', '-i', 
             #'--upper-limit', '100',
             #'-r',
