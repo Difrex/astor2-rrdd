@@ -1,4 +1,4 @@
-from rrdsys import get_mem, get_traf, get_cmd, interfaces, cpus, cpu_cores, cpu_load
+from rrdsys import get_mem, get_traf, get_cmd, interfaces, cpus, cpu_cores, cpu_load, check_ht
 from graph import *
 # RRD module
 import rrdtool
@@ -61,6 +61,10 @@ def update_cpu(rrd):
     load_all = load['all']
     update_cpu_db(db_all, load_all)
     graph(rrd,'cpu')
+
+    # Check hyper-threading
+    if check_ht() == 1:
+        cores = cores * 2
 
     # update cores db
     count = 0

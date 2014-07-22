@@ -1,4 +1,4 @@
-from rrdsys import interfaces, get_cores_by_phys, cpus
+from rrdsys import interfaces, get_cores_by_phys, cpus, check_ht
 
 # RRD module
 import rrdtool
@@ -123,6 +123,10 @@ def graph_cpu(rrd):
     physicals = cpus()
     cores = get_cores_by_phys()
     all_load_db = db_path + rrd['cpu']
+
+    # Check hyper-threading
+    if check_ht() == 1:
+        cores = cores * 2
 
     # generate all load average graphic
     png = png_path + 'All' + rrd['cpu'] + '.png'
