@@ -173,10 +173,9 @@ def generate_core(db,num, cores, ph_type):
             "DEF:user="+ db[num]['db'] +":user:AVERAGE",
             "CDEF:s=sys,100,/",
             "CDEF:u=user,100,/",
-            "AREA:u#0000FF:User",
+            "CDEF:su=u,s,+",
+            "AREA:su#0000FF:User",
             "AREA:s#FF0000:System",
-            "LINE1:u#0000FF",
-            "LINE1:s#FF0000"
             )
     else:
         pass
@@ -197,10 +196,9 @@ def generate_cpu(png, db, core):
             "DEF:user="+ db +":user:AVERAGE",
             "CDEF:s=sys,100,/",
             "CDEF:u=user,100,/",
-            "AREA:u#0000FF:User",
+            "CDEF:su=u,s,+",
+            "AREA:su#0000FF:User",
             "AREA:s#FF0000:System",
-            "LINE1:u#0000FF",
-            "LINE1:s#FF0000"
             )
 
 
