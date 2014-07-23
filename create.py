@@ -94,10 +94,10 @@ def create_cpu(rrd):
 # Create base for all load avverage
 def create_cpu_all(rrd):
     db = db_path + rrd['cpu']
-    data_sources=[ 'DS:sys:COUNTER:600:U:U',
-                'DS:user:COUNTER:600:U:U',
-                'DS:nice:COUNTER:600:U:U',
-                'DS:soft:COUNTER:600:U:U' ]
+    data_sources=[ 'DS:sys:GAUGE:600:U:U',
+                'DS:user:GAUGE:600:U:U',
+                'DS:nice:GAUGE:600:U:U',
+                'DS:soft:GAUGE:600:U:U' ]
     # Create cpu database
     rrdtool.create( db,
                     '--start', '920804400',
@@ -110,10 +110,10 @@ def create_cpu_all(rrd):
 
 # Create base for cores
 def create_core(db):
-    data_sources=[ 'DS:sys:COUNTER:600:U:U',
-                'DS:user:COUNTER:600:U:U',
-                'DS:nice:COUNTER:600:U:U',
-                'DS:soft:COUNTER:600:U:U' ]
+    data_sources=[   'DS:sys:GAUGE:600:U:U',
+                    'DS:user:GAUGE:600:U:U',
+                    'DS:nice:GAUGE:600:U:U',
+                    'DS:soft:GAUGE:600:U:U' ]
     # Create cpu database
     rrdtool.create( db,
                     '--start', '920804400',
