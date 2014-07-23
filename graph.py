@@ -1,4 +1,4 @@
-from rrdsys import interfaces, get_cores_by_phys, cpus
+from rrdsys import interfaces, get_cores_by_phys, cpus, check_ht
 
 # RRD module
 import rrdtool
@@ -124,6 +124,10 @@ def graph_cpu(rrd):
     cores = get_cores_by_phys()
     all_load_db = db_path + rrd['cpu']
 
+    # Check hyper-threading
+    if check_ht() == 1:
+        cores = cores * 2
+
     # generate all load average graphic
     png = png_path + 'All' + rrd['cpu'] + '.png'
     generate_cpu(png, all_load_db, 'All')
@@ -188,7 +192,7 @@ def generate_cpu(png, db, core):
             '--slope-mode', '--dynamic-labels',
             '--watermark=OpenSAN2',
             '--lower-limit', '0', '-E', '-i', '-r',
-            '--upper-limit', '10000',
+            '--upper-limit', '100',
             "DEF:sys="+ db +":sys:AVERAGE",
             "DEF:user="+ db +":user:AVERAGE",
             "CDEF:s=sys,100,/",

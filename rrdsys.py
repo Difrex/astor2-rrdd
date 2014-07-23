@@ -154,17 +154,14 @@ def cpu_load():
     f = open(cpu_file, 'r')
     for line in f.readlines():
         l = line.split()
-        
-        # Exception
+
         c = 2
         # Parsing mpstat output
-        print(l)
         while c < 12:
+            # Exception
             try:
                 num = l[c].replace(',','.')
                 num = num.replace('.','')
-                print(l[c])
-                print(num)
                 l[c] = int( num )
                 if l[1] == 'all':
                     sys_load[l[1]] = { 'usr': int(l[2]), 'nice': int(l[3]), 'sys': int(l[4]),
