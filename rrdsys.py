@@ -58,6 +58,7 @@ def get_mem():
 
 # Get phisicals CPU
 def cpus():
+    os.environ['LC_TIME'] = "ru_RU.utf8"
     proc = '/proc/cpuinfo'
     f = open(proc, "r")
 
