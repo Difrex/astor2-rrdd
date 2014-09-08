@@ -166,12 +166,12 @@ def cpu_load():
                 l[c] = int( num )
                 if l[1] == 'all':
                     sys_load[l[1]] = { 'usr': int(l[2]), 'nice': int(l[3]), 'sys': int(l[4]),
-                    'iowait': int(l[5]), 'soft': int(l[7]), 'idle': int(l[11]) }
+                    'iowait': int(l[5]), 'soft': int(l[7]), 'idle': int(l[10]) }
                 elif l[1] == 'CPU':
                     continue
                 else:
                     sys_load[l[1]] = { 'usr': int(l[2]), 'nice': int(l[3]), 'sys': int(l[4]),
-                    'iowait': int(l[5]), 'soft': int(l[7]), 'idle': int(l[11]) }
+                    'iowait': int(l[5]), 'soft': int(l[7]), 'idle': int(l[10]) }
                 c = c + 1
             except:
                 c = c + 1
