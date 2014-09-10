@@ -13,6 +13,7 @@ png_path = '/var/lib/astor2-rrdd/png/'
 # Needs to rewrite
 ##########################
 
+
 # Check of rrd db file
 def check_db(rrd, db_type):
     if db_type == 'net':
@@ -36,7 +37,12 @@ def new_db(rrd, db_type):
         create_mem(rrd_db)
     elif db_type == 'cpu':
         create_cpu(rrd)
-
+    elif db_type == 'bat':
+        create_bat(rrd)
+#Create new battery DB
+def create_bat(rrd):
+#todo create battery level database
+    print ""
 
 # Create new network DB
 def create_net(rrd):

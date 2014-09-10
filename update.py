@@ -19,6 +19,9 @@ def update_db(rrd, db_type):
         update_mem(rrd, db_type)
     elif db_type == 'cpu':
         update_cpu(rrd)
+    elif db_type == 'bat':
+#todo create update_bat function
+        print ""
 
 
 # Update memory DB

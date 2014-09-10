@@ -18,6 +18,8 @@ def commit():
         rrd['cpu']='Cpu.rrd'
     if config.NET_ENABLED:
         rrd['net']='Network.rrd'
+    if config.BATTERY_ENABLED:
+        rrd['bat']='Battery.rrd'
     print(rrd)
 
     for key, value in rrd.iteritems():
